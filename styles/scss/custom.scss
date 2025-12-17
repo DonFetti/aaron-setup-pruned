@@ -1,0 +1,348 @@
+// Variables
+$font-copperplate: "Copperplate";
+$font-path: '/font/Copperplate.otf';
+$color-gold: #c49528;
+$color-gold-hover: #a27b20;
+$color-brown: #84641c;
+$color-text: #231a1a;
+$color-white: #ffffff;
+$color-black: #000000;
+$color-overlay: #44330bbd;
+$color-gradient-start: #d3b886;
+$color-gradient-end: #ffffff;
+$color-gray: #757070;
+$color-gray-light: rgb(116, 116, 114);
+$color-popup-bg: rgba(48, 44, 44, 0.8);
+$color-close-hover: rgba(20, 18, 18, 0.226);
+
+// Font Face
+@font-face {
+    font-family: $font-copperplate;
+    src: url($font-path) format('otf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+// Base Styles
+html {
+    font-size: 16px;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    background: $color-white;
+    flex: 1;
+}
+
+p {
+    color: $color-text;
+}
+
+h2 {
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+ul {
+    text-align: center;
+    font-size: 2rem;
+    display: inline-block;
+}
+
+li {
+    text-decoration: none;
+    font-size: 1rem;
+}
+
+// Navigation
+.active-nav {
+    color: $color-gold;
+
+    &:hover {
+        color: $color-gold-hover;
+    }
+}
+
+.non-active-nav {
+    color: $color-brown;
+
+    &:hover {
+        color: $color-gold-hover;
+    }
+}
+
+// Footer
+.footer-div {
+    font-family: Copperplate;
+    text-transform: uppercase;
+    font-weight: 1000 !important;
+
+    @media (min-width: 640px) {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+}
+
+.footer-logo {
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+
+.footer-wording {
+    @media (min-width: 640px) {
+        padding-left: 5%;
+        width: 40%;
+        flex: 1;
+    }
+}
+
+.logo-footer-link {
+    @media (min-width: 640px) {
+        margin-left: auto;
+        margin-right: 7%;
+    }
+
+    @media (max-width: 639px) {
+        margin: auto;
+    }
+}
+
+.logo-spacing {
+    @media (min-width: 992px) {
+        margin-left: 50px;
+    }
+}
+
+// Typography Responsive
+h1 {
+    @media (max-width: 400px) {
+        font-size: 1rem;
+    }
+
+    @media (min-width: 768px) {
+        font-size: 3rem;
+    }
+
+    @media (max-width: 767px) {
+        font-size: 2rem;
+    }
+}
+
+p {
+    @media (min-width: 768px) {
+        font-size: 1.5rem;
+    }
+
+    @media (max-width: 767px) {
+        font-size: 1rem;
+    }
+
+    @media (min-width: 1200px) {
+        font-size: 2rem;
+    }
+}
+
+// Slideshow
+#slideshow {
+    @media (min-width: 768px) {
+        position: relative;
+        width: 100%;
+        height: 80vh;
+        overflow: hidden;
+    }
+
+    @media (max-width: 767px) {
+        position: relative;
+        width: 100%;
+        height: 50vh;
+        overflow: hidden;
+    }
+}
+
+.slideshow-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.slide {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+
+    &.active {
+        opacity: 1;
+    }
+}
+
+.overlay {
+    background: $color-overlay;
+    width: 100%;
+}
+
+// Layout
+.vert-div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2vh;
+}
+
+.horiz-div {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.services {
+    flex: 1 1 auto;
+
+    @media (min-width: 992px) {
+        width: 30%;
+        gap: 3%;
+    }
+}
+
+// About Section
+#about-banner {
+    p {
+        font-size: 1.3rem;
+    }
+}
+
+.about {
+    background: linear-gradient(to bottom, $color-gradient-start, $color-gradient-end);
+    padding-top: 3vh;
+}
+
+.about-header {
+    font-size: 2.9rem;
+}
+
+// Contact
+.contact-btn {
+    background-color: $color-black;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    margin-bottom: 3vh;
+}
+
+.contact-project {
+    background-color: $color-white;
+    background-image: radial-gradient(circle, #d3b8865d 15%, $color-white 90%);
+    background-position: center;
+    background-repeat: no-repeat;
+    padding: 1%;
+
+    @media (min-width: 768px) {
+        width: 60%;
+    }
+
+    @media (max-width: 767px) {
+        width: 100%;
+    }
+}
+
+// Services
+.service-headers {
+    margin-bottom: 0vh;
+    margin-top: 2vh;
+    font-size: 2rem;
+    text-decoration: underline;
+}
+
+.services-description {
+    font-size: 1rem;
+    width: 80%;
+    margin: auto;
+    color: $color-gray-light;
+    margin-bottom: 2vh;
+}
+
+.service-section {
+    text-align: center;
+    z-index: 12;
+    background: $color-white;
+}
+
+// Gallery
+.gallery {
+    text-align: center;
+    padding-top: 4vh;
+    padding-bottom: 3vh;
+}
+
+.gallery-div {
+    width: 50vw;
+    height: 50vh;
+    margin: auto;
+    border: $color-black;
+    border-width: 2px;
+    border-style: solid;
+    background-color: $color-gray;
+}
+
+// Popup
+#popup {
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: $color-popup-bg;
+    z-index: 100;
+}
+
+.popup-internal {
+    background: linear-gradient(to bottom, $color-gradient-start, $color-gradient-end);
+    position: relative;
+    height: 80%;
+    width: 50%;
+    min-width: 320px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.closebutton {
+    margin: 3px;
+    cursor: pointer;
+
+    &:hover {
+        background-color: $color-close-hover;
+        border-radius: 50%;
+    }
+}
+
+// Forms
+form {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    margin: 20px;
+
+    * {
+        flex: 0 0 auto;
+    }
+}
+
+// Custom Navbar Toggle
+.navtogcustom {
+    --style: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%23ffffff' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    background-image: var(--style) !important;
+}
