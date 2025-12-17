@@ -296,11 +296,12 @@ p {
 
 // Contact Section
 .contact-section {
-    background: linear-gradient(to bottom, $color-gradient-start, $color-gradient-end);
-    padding: 4vh 5%;
-    text-align: center;
-    margin: 0 auto;
-    max-width: 800px;
+    // background: linear-gradient(to bottom, $color-gradient-start, $color-gradient-end);
+    // padding: 4vh 5%;
+    // text-align: center;
+    // margin: 0 auto;
+    // max-width: 800px;
+    margin-bottom: 5vh;
 
     h2 {
         margin-bottom: 3vh;

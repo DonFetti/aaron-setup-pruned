@@ -273,11 +273,7 @@ li {
 }
 
 .contact-section {
-  background: linear-gradient(to bottom, #d3b886, #ffffff);
-  padding: 4vh 5%;
-  text-align: center;
-  margin: 0 auto;
-  max-width: 800px;
+  margin-bottom: 5vh;
 }
 .contact-section h2 {
   margin-bottom: 3vh;
