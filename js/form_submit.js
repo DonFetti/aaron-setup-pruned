@@ -19,7 +19,6 @@ function submitForm(event) {
             if (data.status === 'success') {
                 form.reset();
                 setTimeout(() => {
-                    popup.style.display = 'none';
                     formMessage.style.display = 'none';
                 }, 3000);
             }

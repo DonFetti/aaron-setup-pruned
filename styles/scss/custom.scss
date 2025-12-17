@@ -12,8 +12,6 @@ $color-gradient-start: #d3b886;
 $color-gradient-end: #ffffff;
 $color-gray: #757070;
 $color-gray-light: rgb(116, 116, 114);
-$color-popup-bg: rgba(48, 44, 44, 0.8);
-$color-close-hover: rgba(20, 18, 18, 0.226);
 
 // Font Face
 @font-face {
@@ -296,36 +294,48 @@ p {
     background-color: $color-gray;
 }
 
-// Popup
-#popup {
-    position: fixed;
-    height: 100%;
-    width: 100%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: $color-popup-bg;
-    z-index: 100;
-}
-
-.popup-internal {
+// Contact Section
+.contact-section {
     background: linear-gradient(to bottom, $color-gradient-start, $color-gradient-end);
-    position: relative;
-    height: 80%;
-    width: 50%;
-    min-width: 320px;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
+    padding: 4vh 5%;
+    text-align: center;
+    margin: 0 auto;
+    max-width: 800px;
 
-.closebutton {
-    margin: 3px;
-    cursor: pointer;
+    h2 {
+        margin-bottom: 3vh;
+    }
 
-    &:hover {
-        background-color: $color-close-hover;
-        border-radius: 50%;
+    form {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    label {
+        display: block;
+        margin-top: 15px;
+        margin-bottom: 5px;
+        text-align: left;
+        font-weight: bold;
+    }
+
+    input,
+    textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 1rem;
+        box-sizing: border-box;
+    }
+
+    textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    button {
+        margin-top: 20px;
     }
 }
 

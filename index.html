@@ -41,7 +41,7 @@
                 <div style="flex:1;" class="vert-div">
                     <img src="\images\Logos\Spear Contracting Round Logo.png" style="width: 70%; height: auto;">
                 </div>
-            </div> <a href="#" class="contact-trigger"><button class="contact-btn" style="margin-top: 3vh;">Contact now for a Free Quote!</button></a>
+            </div> <a href="#contact-section" class="contact-trigger"><button class="contact-btn" style="margin-top: 3vh;">Contact now for a Free Quote!</button></a>
             <div></div> <a style="all:unset" href="/contact">
                 <h3 style='all:unset; font-size: calc(1.3rem + 0.6vw); color: #49524c; padding-bottom: 1vh; margin-top: 3vh; cursor:pointer;'>Aaron Spierenburg | Owner Operator</h3>
             </a>
@@ -100,12 +100,25 @@
                 <div style="flex: 1;">
                     <h4 style="font-size: 1.8rem;">Have a project in mind?</h4>
                     <p style="font-size: 1.25rem;">If you&apos;re considering any of these projects, or have something unique in mind, please reach out for a free consultation!</p>
-                </div> <a href="#" class="contact-trigger" style="flex: 1; display: inline;"><button class="contact-btn" style="margin-bottom: 0px;">Contact now!</button></a>
+                </div> <a href="#contact-section" class="contact-trigger" style="flex: 1; display: inline;"><button class="contact-btn" style="margin-bottom: 0px;">Contact now!</button></a>
             </div>
         </section>
         <section class="gallery">
             <h2>Project Gallery Coming Soon</h2>
             <div data-empty-placeholder class="gallery-div"></div>
+        </section>
+        <section id="contact-section" class="contact-section">
+            <h2 style="text-align: center;">Contact now for a Free Quote!</h2>
+            <div id="form-message" style="display: none; margin-bottom: 15px; padding: 10px; border-radius: 4px;"></div>
+            <form id="contact-form" onsubmit="submitForm(event)">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                <label for="message">Message:</label>
+                <textarea id="message" name="message" required></textarea>
+                <button style="width: 30%;" type="submit">Submit</button>
+            </form>
         </section>
     </main>
     <footer class="bg-primary">
@@ -117,35 +130,13 @@
             <div class="footer-logo"> <a href="/" class="logo-footer-link"><img src="\images\Spear Contracting Logo.jpg" width="124" height="124"></a>
             </div>
         </div>
-        <div style="text-align: center;">
-            <p style="display: inline; font-size: 0.8rem; color: #938d8d;">Copyright &copy; 2024 Spear Contracting</p>
-        </div>
-    </footer>
-    <div id="popup">
-        <div class="popup-internal">
-            <div style="text-align: right;">
-                <svg xmlns="http://www.w3.org/2000/svg" height="30px" fill="currentColor" class="bi bi-x-circle closebutton" viewBox="0 0 16 16" width="30px" id="closepop">
-                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
-                    <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
-                </svg>
+            <div style="text-align: center;">
+                <p style="display: inline; font-size: 0.8rem; color: #938d8d;">Copyright &copy; 2024 Spear Contracting</p>
             </div>
-            <h2 style="text-align: center;">Contact now for a Free&nbsp;Quote!</h2>
-            <div id="form-message" style="display: none; margin-bottom: 15px; padding: 10px; border-radius: 4px;"></div>
-            <form id="contact-form" onsubmit="submitForm(event)">
-                <label for="name">Name:</label>
-                <input type="text" id="name" name="name" required>
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required>
-                <label for="message">Message:</label>
-                <textarea id="message" name="message" required></textarea>
-                <button style="width: 30%;" type="submit">Submit</button>
-            </form>
-        </div>
-    </div>
+        </footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/nav_place.js"></script>
     <script src="js/slides.js"></script>
-    <script src="js/popup.js"></script>
     <script src="js/form_submit.js"></script>
 </body>
 

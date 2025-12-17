@@ -272,35 +272,42 @@ li {
   background-color: #757070;
 }
 
-#popup {
-  position: fixed;
-  height: 100%;
-  width: 100%;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: rgba(48, 44, 44, 0.8);
-  z-index: 100;
-}
-
-.popup-internal {
+.contact-section {
   background: linear-gradient(to bottom, #d3b886, #ffffff);
-  position: relative;
-  height: 80%;
-  width: 50%;
-  min-width: 320px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  padding: 4vh 5%;
+  text-align: center;
+  margin: 0 auto;
+  max-width: 800px;
 }
-
-.closebutton {
-  margin: 3px;
-  cursor: pointer;
+.contact-section h2 {
+  margin-bottom: 3vh;
 }
-.closebutton:hover {
-  background-color: rgba(20, 18, 18, 0.226);
-  border-radius: 50%;
+.contact-section form {
+  max-width: 600px;
+  margin: 0 auto;
+}
+.contact-section label {
+  display: block;
+  margin-top: 15px;
+  margin-bottom: 5px;
+  text-align: left;
+  font-weight: bold;
+}
+.contact-section input,
+.contact-section textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+.contact-section textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+.contact-section button {
+  margin-top: 20px;
 }
 
 form {
