@@ -256,23 +256,8 @@ li {
   background: #ffffff;
 }
 
-.gallery {
-  text-align: center;
-  padding-top: 4vh;
-  padding-bottom: 3vh;
-}
-
-.gallery-div {
-  width: 50vw;
-  height: 50vh;
-  margin: auto;
-  border: #000000;
-  border-width: 2px;
-  border-style: solid;
-  background-color: #757070;
-}
-
 .contact-section {
+  margin-top: 5vh;
   margin-bottom: 5vh;
 }
 .contact-section h2 {
