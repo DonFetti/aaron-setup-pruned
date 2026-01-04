@@ -11,7 +11,10 @@ fetch('/partials/navbar.html')
         (href === '/' && (path === '/' || path === '/index.html')) ||
         (href !== '/' && path.endsWith(href.replace(/^\//, "")))
       ) {
-        a.classList.add('active');
+        a.classList.add('active-nav');
+        a.classList.remove('non-active-nav');
+      } else {
+        a.classList.add('non-active-nav');
       }
     });
   });
