@@ -170,29 +170,6 @@ li {
   width: 100%;
 }
 
-.vert-div {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2vh;
-}
-
-.horiz-div {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.services {
-  flex: 1 1 auto;
-}
-@media (min-width: 992px) {
-  .services {
-    width: 30%;
-    gap: 3%;
-  }
-}
-
 #about-banner p {
   font-size: 1.3rem;
 }
@@ -223,16 +200,8 @@ li {
   background-position: center;
   background-repeat: no-repeat;
   padding: 1%;
-}
-@media (min-width: 768px) {
-  .contact-project {
-    width: 60%;
-  }
-}
-@media (max-width: 767px) {
-  .contact-project {
-    width: 100%;
-  }
+  width: 100%;
+  margin: 0 auto;
 }
 
 .service-headers {
@@ -304,4 +273,39 @@ form * {
 .navtogcustom {
   --style: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%23ffffff' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
   background-image: var(--style) !important;
+}
+
+#vert-line-assitance {
+  display: none;
+  position: fixed;
+  top: 0%;
+  left: 50%;
+  width: 4px;
+  height: 100vh;
+  background-color: black;
+  z-index: 10;
+  margin: auto;
+  transform: translateX(-50%);
+}
+
+.overlay {
+  z-index: 1;
+}
+
+.owner-info-link {
+  all: unset;
+  display: block;
+}
+.owner-info-link h3 {
+  all: unset;
+  display: block;
+  font-size: calc(1.3rem + 0.6vw);
+  color: #49524c;
+  padding-bottom: 1vh;
+  margin-top: 3vh;
+  cursor: pointer;
+}
+
+#about-banner {
+  border-top-width: 2px !important;
 }/*# sourceMappingURL=custom.css.map */

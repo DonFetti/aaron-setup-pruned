@@ -18,108 +18,121 @@
         data-pgc-edit-types="header" data-pgc-define-name="navbar">
         <div id="navbar"></div>
     </header>
-    <main style="height:100vh">
-        <div style="display: none; position: fixed; top: 0%; left: 50%; width: 4px; height: 100vh; background-color: black; z-index: 10; margin: auto; transform: translateX(-50%);"
-            id="vert-line-assitance"></div>
-        <section id="slideshow" style="position: relative; overflow: hidden;">
+    <main class="vh-100">
+        <div id="vert-line-assitance"></div>
+        <section id="slideshow" class="position-relative overflow-hidden">
             <div class="slideshow-container">
                 <div class="slide active" style="background-image: url('images/Barn Frame.jpg');"></div>
                 <div class="slide" style="background-image: url('images/Barn Finished.jpg');"></div>
                 <div class="slide" style="background-image: url('images/Custom Deck.jpg');"></div>
                 <div class="slide" style="background-image: url('images/Frame.jpg');"></div>
             </div>
-            <div class="overlay" style="position: absolute; bottom: 0%; text-align: center; color: white; z-index: 1;">
-                <div class="row" style="margin-left: 5%; margin-right: 5%;">
+            <div class="overlay position-absolute bottom-0 text-center text-white">
+                <div class="row mx-2">
                     <div class="me-auto ms-auto text-center">
                         <h1 class="text-white">Spear Contracting</h1>
                     </div>
                 </div>
             </div>
         </section>
-        <section class="about" style="text-align: center;">
-            <h2 style="margin: auto; padding-bottom: 2%;" class="about-header">About Spear Contracting</h2>
-            <div style="padding-left:10vw;padding-right:10vw;" class="horiz-div text-center">
-                <p style="flex:1">From renovations to new builds, Spear Contracting delivers exceptional craftsmanship
-                    and reliable service across the Bracebridge and Muskoka area. Let's build your vision together!</p>
-                <div style="flex:1;" class="vert-div">
-                    <img src="\images\Logos\Spear Contracting Round Logo.png" style="width: 70%; height: auto;">
+        <section class="about text-center">
+            <h2 class="about-header mx-auto pb-2">About Spear Contracting</h2>
+            <div class="container">
+                <div class="row align-items-center px-3 px-lg-5">
+                    <div class="col-md-6">
+                        <p>From renovations to new builds, Spear Contracting delivers exceptional craftsmanship
+                            and reliable service across the Bracebridge and Muskoka area. Let's build your vision together!</p>
+                    </div>
+                    <div class="col-md-6 d-flex flex-column align-items-center">
+                        <img src="\images\Logos\Spear Contracting Round Logo.png" class="w-75 h-auto">
+                    </div>
                 </div>
-            </div> <a href="#contact-section" class="contact-trigger"><button class="contact-btn"
-                    style="margin-top: 3vh;">Contact now for a Free Quote!</button></a>
-            <div></div> <a style="all:unset" href="/contact">
-                <h3
-                    style='all:unset; font-size: calc(1.3rem + 0.6vw); color: #49524c; padding-bottom: 1vh; margin-top: 3vh; cursor:pointer;'>
-                    Aaron Spierenburg | Owner Operator</h3>
+            </div> <a href="#contact-section" class="contact-trigger"><button class="contact-btn mt-4">
+                    Contact now for a Free Quote!</button></a>
+            <div></div> <a class="owner-info-link" href="/contact">
+                <h3>Aaron Spierenburg | Owner Operator</h3>
             </a>
         </section>
-        <div class="horiz-div" id="about-banner"
-            style="gap: 3vw; justify-content: center; background: #ffffff; padding-bottom: 1%; padding-top: 1%; border-top: 2px solid black; text-align: center;">
-            <div style="width:30vw">
-                <h4>Experience</h4>
-                <p>4+ Years Carpentry Experience</p>
-            </div>
-            <div style="width:30vw">
-                <h4>Projects Worked</h4>
-                <p>50+ Projects Worked and Completed</p>
-            </div>
-            <div style="width:30vw">
-                <h4>Values</h4>
-                <p>Integrity, dedication, and client satisfaction</p>
+        <div class="container-fluid bg-white border-top border-dark text-center py-2" id="about-banner">
+            <div class="row justify-content-center">
+                <div class="col-md-4 col-lg-3">
+                    <h4>Experience</h4>
+                    <p>4+ Years Carpentry Experience</p>
+                </div>
+                <div class="col-md-4 col-lg-3">
+                    <h4>Projects Worked</h4>
+                    <p>50+ Projects Worked and Completed</p>
+                </div>
+                <div class="col-md-4 col-lg-3">
+                    <h4>Values</h4>
+                    <p>Integrity, dedication, and client satisfaction</p>
+                </div>
             </div>
         </div>
         <section class="border-2 border-primary border-top service-section">
-            <div class="horiz-div"
-                style="justify-content: center; margin: auto; width: 90%; gap: 3%; margin-top: 5vh; align-items: flex-start;">
-                <div class="services">
-                    <h3 class="service-headers">Residential</h3>
-                    <p class="services-description">Your dream home brought to life &ndash; from new builds to upgrades
-                    </p>
-                    <ul style="padding: 0;">
-                        <li>Kitchen Remodels</li>
-                        <li>Bathroom Upgrades</li>
-                        <li>Home Additions</li>
-                        <li>Custom Decks</li>
-                        <li>Sheds & More</li>
-                    </ul>
-                </div>
-                <div class="services">
-                    <h3 class="service-headers">Agricultural</h3>
-                    <p class="services-description">Strengthen your farm operations with tailored builds</p>
-                    <ul style="padding: 0;">
-                        <li>Barn Construction</li>
-                        <li>Greenhouses</li>
-                        <li>Horse Stables</li>
-                        <li>Indoor/Outdoor Arena</li>
-                        <li>Equipment Storage</li>
-                    </ul>
-                </div>
-                <div class="services">
-                    <h3 class="service-headers">Commercial</h3>
-                    <p class="services-description">Supporting your business with functional, beautiful spaces</p>
-                    <ul style="padding: 0;">
-                        <li>Art Galleries</li>
-                        <li>Tasting Lounges</li>
-                        <li>Event Pavilions</li>
-                        <li>Employee Housing</li>
-                        <li>Production Facilities</li>
-                    </ul>
+            <div class="container">
+                <div class="row justify-content-center align-items-start mt-5">
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <h3 class="service-headers">Residential</h3>
+                        <p class="services-description">Your dream home brought to life &ndash; from new builds to upgrades
+                        </p>
+                        <ul class="list-unstyled">
+                            <li>Kitchen Remodels</li>
+                            <li>Bathroom Upgrades</li>
+                            <li>Home Additions</li>
+                            <li>Custom Decks</li>
+                            <li>Sheds & More</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <h3 class="service-headers">Agricultural</h3>
+                        <p class="services-description">Strengthen your farm operations with tailored builds</p>
+                        <ul class="list-unstyled">
+                            <li>Barn Construction</li>
+                            <li>Greenhouses</li>
+                            <li>Horse Stables</li>
+                            <li>Indoor/Outdoor Arena</li>
+                            <li>Equipment Storage</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <h3 class="service-headers">Commercial</h3>
+                        <p class="services-description">Supporting your business with functional, beautiful spaces</p>
+                        <ul class="list-unstyled">
+                            <li>Art Galleries</li>
+                            <li>Tasting Lounges</li>
+                            <li>Event Pavilions</li>
+                            <li>Employee Housing</li>
+                            <li>Production Facilities</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-            <div class="contact-project horiz-div"
-                style="justify-content: center; margin: auto; margin-top: 2vh; padding-bottom: 2vh;">
-                <div style="flex: 1;">
-                    <h4 style="font-size: 1.8rem;">Have a project in mind?</h4>
-                    <p style="font-size: 1.25rem;">If you&apos;re considering any of these projects, or have something
-                        unique in mind, please reach out for a free consultation!</p>
-                </div> <a href="#contact-section" class="contact-trigger" style="flex: 1; display: inline;"><button
-                        class="contact-btn" style="margin-bottom: 0px;">Contact now!</button></a>
+            <div class="container mt-3 pb-3">
+                <div class="row justify-content-center align-items-center">
+                    <div class="col-lg-10">
+                        <div class="contact-project">
+                            <div class="row align-items-center">
+                                <div class="col-md-6">
+                                    <h4 class="fs-4">Have a project in mind?</h4>
+                                    <p class="fs-5">If you&apos;re considering any of these projects, or have something
+                                        unique in mind, please reach out for a free consultation!</p>
+                                </div>
+                                <div class="col-md-6 text-center text-md-start">
+                                    <a href="#contact-section" class="contact-trigger d-inline-block"><button
+                                            class="contact-btn mb-0">Contact now!</button></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
         
 
         <section id="contact-section" class="contact-section">
-            <h2 style="text-align: center;">Contact now for a Free Quote!</h2>
-            <div id="form-message" style="display: none; margin-bottom: 15px; padding: 10px; border-radius: 4px;"></div>
+            <h2 class="text-center">Contact now for a Free Quote!</h2>
+            <div id="form-message" class="d-none mb-3 p-2 rounded"></div>
             <form id="contact-form" onsubmit="submitForm(event)">
                 <label for="name">Name:</label>
                 <input type="text" id="name" name="name" required>
@@ -127,22 +140,22 @@
                 <input type="email" id="email" name="email" required>
                 <label for="message">Message:</label>
                 <textarea id="message" name="message" required></textarea>
-                <button style="width: 30%;" type="submit">Submit</button>
+                <button class="w-25 contact-btn" type="submit">Submit</button>
             </form>
         </section>
     </main>
     <footer class="bg-primary">
         <div class="footer-div">
             <div class="footer-wording">
-                <h2 class="text-white" style="font-weight: 1000; margin-top: 3vh;">Spear Contracting</h2>
-                <p class="text-white" style="display: block; overflow: visible;">Paragraph</p>
+                <h2 class="text-white fw-bolder mt-4">Spear Contracting</h2>
+                <p class="text-white d-block overflow-visible">Paragraph</p>
             </div>
             <div class="footer-logo"> <a href="/" class="logo-footer-link"><img src="\images\Logos\Spear Contracting Logo.jpg"
                         width="124" height="124"></a>
             </div>
         </div>
-        <div style="text-align: center;">
-            <p style="display: inline; font-size: 0.8rem; color: #938d8d;">Copyright &copy; 2024 Spear Contracting</p>
+        <div class="text-center">
+            <p class="d-inline small text-secondary">Copyright &copy; 2024 Spear Contracting</p>
         </div>
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
