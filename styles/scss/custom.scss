@@ -356,3 +356,15 @@ form {
 #about-banner {
     border-top-width: 2px !important;
 }
+
+// Project Detail Page - Override global ul text-align center
+#project-scope,
+#project-materials,
+#project-team,
+#project-highlights {
+    text-align: left !important;
+
+    li {
+        text-align: left !important;
+    }
+}

@@ -308,4 +308,17 @@ form * {
 
 #about-banner {
   border-top-width: 2px !important;
+}
+
+#project-scope,
+#project-materials,
+#project-team,
+#project-highlights {
+  text-align: left !important;
+}
+#project-scope li,
+#project-materials li,
+#project-team li,
+#project-highlights li {
+  text-align: left !important;
 }/*# sourceMappingURL=custom.css.map */
