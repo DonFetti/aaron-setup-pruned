@@ -11,6 +11,8 @@
     <meta name="robots" content="index, follow">
     <meta name="theme-color" content="#000000">
     <meta name="format-detection" content="telephone=no">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <link rel="canonical" href="https://www.spearcontracting.com/">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
@@ -39,9 +41,32 @@
     <!-- Preconnects for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
     <!-- Example Google Fonts (update your font as desired) -->
     <!-- <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"> -->
 
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "name": "Spear Contracting",
+        "description": "Spear Contracting serving Southern and Central Ontario",
+        "url": "https://www.spearcontracting.com/",
+        "logo": "https://www.spearcontracting.com/images/Logos/Spear%20Contracting%20Round%20Logo.png",
+        "image": "https://www.spearcontracting.com/images/Logos/Spear%20Contracting%20Round%20Logo.png",
+        "address": {
+            "@type": "PostalAddress",
+            "addressRegion": "Ontario",
+            "addressCountry": "CA"
+        },
+        "areaServed": {
+            "@type": "State",
+            "name": "Ontario"
+        },
+        "serviceType": ["Carpentry", "Renovations", "Construction", "Custom Builds", "Home Improvement"]
+    }
+    </script>
 
 </head>
 
@@ -81,7 +106,7 @@
                 </div>
             </div> <a href="#contact-section" class="contact-trigger"><button class="contact-btn mt-4">
                     Contact now for a Free Quote!</button></a>
-            <div></div> <a class="owner-info-link" href="/contact">
+            <div></div> <a class="owner-info-link" href="#contact-section">
                 <h3>Aaron Spierenburg | Owner Operator</h3>
             </a>
         </section>
