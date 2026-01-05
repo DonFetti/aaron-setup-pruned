@@ -1,0 +1,43 @@
+{
+  "slug": "",
+  "title": "",
+  "projectType": ["Carpentry"],
+  "status": "",
+
+  "location": {
+    "city": "",
+    "province": ""
+  },
+
+  "client": {
+    "name": ""
+  },
+
+  "description": "",
+
+  "dates": {
+    "start": "",
+    "end": ""
+  },
+
+  "scopeOfWork": [],
+
+  "materials": [],
+
+  "team": [
+    { "name": "", "role": "" },
+    { "name": "", "role": "" }
+  ],
+
+  "coverImage": "",
+
+  "gallery": [
+    { "url": "", "caption": "" },
+    { "url": "", "caption": "" },
+    { "url": "", "caption": "" }
+  ],
+
+  "highlights": [],
+
+  "createdAt": ""
+}
