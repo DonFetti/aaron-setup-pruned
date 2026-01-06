@@ -105,7 +105,9 @@ function populateProjectData(project) {
         // Status
         if (project.status) {
             const statusBadge = document.createElement('span');
-            statusBadge.className = 'badge bg-success';
+            // Use bg-success if status is 'Completed' (case-insensitive), else bg-warning
+            const isCompleted = typeof project.status === 'string' && project.status.trim().toLowerCase() === 'completed';
+            statusBadge.className = 'badge ' + (isCompleted ? 'bg-success' : 'bg-warning');
             statusBadge.textContent = project.status;
             projectMeta.appendChild(statusBadge);
         }
