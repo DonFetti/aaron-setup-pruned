@@ -1,0 +1,131 @@
+{
+  "slug": "custom-room-and-dock",
+  "title": "Custom Muskoka Room & Dock",
+  "projectType": [
+    "Carpentry",
+    "Demolition",
+    "Addition",
+    "Dock Framing",
+    "Residential"
+  ],
+  "status": "Completed",
+  "location": {
+    "city": "Bracebridge",
+    "province": "Ontario"
+  },
+  "client": {
+    "name": "Littlestocke"
+  },
+  "description": "Custom 24×24 dock framed over existing cribbing using 24-foot 2×12 members, integrated with a Muskoka room deck structure. Project included demolition of existing structures, structural remediation, and new dock and deck framing.",
+  "dates": {
+    "start": "Fall 2025",
+    "end": "Winter 2025"
+  },
+  "scopeOfWork": [
+    "Demolition of existing deck, dock, and overhang",
+    "Dock framing over existing cribbing",
+    "Re-framing of two exterior walls due to rot damage",
+    "Exterior door re-framing",
+    "Helical pile installation",
+    "Post setting",
+    "Deck framing",
+    "Subfloor installation"
+  ],
+  "materials": [
+    "Pressure-treated framing lumber",
+    "Pressure-treated posts",
+    "Pressure-treated plywood",
+    "Helical piles"
+  ],
+  "team": [
+    {
+      "name": "Aaron Spierenburg",
+      "role": "Lead Carpenter"
+    }
+  ],
+  "coverImage": "gallery/custom-room-and-dock/DockComplete4.jpg",
+  "gallery": [
+    {
+      "url": "gallery/custom-room-and-dock/1dockjoin.jpg",
+      "caption": ""
+    },
+    {
+      "url": "gallery/custom-room-and-dock/1dockprog1.jpg",
+      "caption": ""
+    },
+    {
+      "url": "gallery/custom-room-and-dock/1dock_prog2.jpg",
+      "caption": ""
+    },
+    {
+      "url": "gallery/custom-room-and-dock/DockComplete.jpg",
+      "caption": ""
+    },
+    {
+      "url": "gallery/custom-room-and-dock/DockComplete2.jpg",
+      "caption": ""
+    },
+    {
+      "url": "gallery/custom-room-and-dock/DockComplete3.jpg",
+      "caption": ""
+    },
+    {
+      "url": "gallery/custom-room-and-dock/DockComplete4.jpg",
+      "caption": ""
+    },
+    {
+      "url": "gallery/custom-room-and-dock/IMG.jpg",
+      "caption": ""
+    },
+    {
+      "url": "gallery/custom-room-and-dock/IMG_20251113_134045.jpg",
+      "caption": ""
+    },
+    {
+      "url": "gallery/custom-room-and-dock/IMG_20251113_134050.jpg",
+      "caption": ""
+    },
+    {
+      "url": "gallery/custom-room-and-dock/IMG_20251118_101937.jpg",
+      "caption": ""
+    },
+    {
+      "url": "gallery/custom-room-and-dock/IMG_20251119_133320.jpg",
+      "caption": ""
+    },
+    {
+      "url": "gallery/custom-room-and-dock/IMG_20251119_151534.jpg",
+      "caption": ""
+    },
+    {
+      "url": "gallery/custom-room-and-dock/IMG_20251119_153007.jpg",
+      "caption": ""
+    },
+    {
+      "url": "gallery/custom-room-and-dock/IMG_20251121_155054.jpg",
+      "caption": ""
+    },
+    {
+      "url": "gallery/custom-room-and-dock/IMG_20251121_161846.jpg",
+      "caption": ""
+    },
+    {
+      "url": "gallery/custom-room-and-dock/IMG_20251128_131700.jpg",
+      "caption": ""
+    },
+    {
+      "url": "gallery/custom-room-and-dock/IMG_20251128_132137.jpg",
+      "caption": ""
+    },
+    {
+      "url": "gallery/custom-room-and-dock/IMG_20251128_132148.jpg",
+      "caption": ""
+    }
+  ],
+  "highlights": [
+    "Discovered significant concealed water damage after siding removal at ledger attachment points",
+    "Re-framed both affected exterior walls to restore structural integrity before proceeding",
+    "Ensured long-term durability by addressing hidden rot rather than framing over compromised structure"
+  ],
+  "createdAt": "2025-01-06"
+}
