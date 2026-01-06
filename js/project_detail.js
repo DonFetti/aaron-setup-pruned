@@ -75,15 +75,6 @@ function populateProjectData(project) {
     if (coverImage && project.coverImage) {
         coverImage.src = project.coverImage;
         coverImage.alt = project.title || 'Project cover image';
-        coverImage.style.cursor = 'pointer';
-        
-        // Add click to open in viewer (include cover image in gallery array)
-        coverImage.addEventListener('click', () => {
-            const allImages = project.gallery && Array.isArray(project.gallery) 
-                ? [{ url: project.coverImage, caption: project.title || 'Cover image' }, ...project.gallery.filter(img => img.url)]
-                : [{ url: project.coverImage, caption: project.title || 'Cover image' }];
-            openImageViewer(allImages, 0);
-        });
     }
     
     // Project Type Badges
@@ -155,8 +146,16 @@ function populateProjectData(project) {
         const validImages = project.gallery.filter(img => img.url);
         
         if (validImages.length > 0) {
+            // Check if mobile device (using window width, Bootstrap breakpoint is 768px)
+            const isMobile = window.innerWidth < 768;
+            // On mobile, only show first 3 images in gallery, but all images available in modal
+            const imagesToDisplay = isMobile ? validImages.slice(0, 3) : validImages;
+            
             galleryContainer.innerHTML = '';
-            validImages.forEach((image, index) => {
+            imagesToDisplay.forEach((image, displayIndex) => {
+                // Find the original index in the full validImages array
+                const originalIndex = validImages.findIndex(img => img.url === image.url);
+                
                 const col = document.createElement('div');
                 col.className = 'col-md-6 col-lg-4';
                 
@@ -165,13 +164,13 @@ function populateProjectData(project) {
                 
                 const img = document.createElement('img');
                 img.src = image.url;
-                img.alt = image.caption || `Gallery image ${index + 1}`;
+                img.alt = image.caption || `Gallery image ${originalIndex + 1}`;
                 img.className = 'card-img-top';
                 img.style.cssText = 'height: 250px; object-fit: cover; cursor: pointer;';
                 
-                // Add click to open in modal viewer
+                // Add click to open in modal viewer with all images, starting at clicked image
                 img.addEventListener('click', () => {
-                    openImageViewer(validImages, index);
+                    openImageViewer(validImages, originalIndex);
                 });
                 
                 if (image.caption) {
@@ -188,6 +187,25 @@ function populateProjectData(project) {
                 col.appendChild(card);
                 galleryContainer.appendChild(col);
             });
+            
+            // Add "See More" button on mobile if there are more than 3 images
+            if (isMobile && validImages.length > 3) {
+                const seeMoreCol = document.createElement('div');
+                seeMoreCol.className = 'col-12 mt-3';
+                
+                const seeMoreBtn = document.createElement('button');
+                seeMoreBtn.className = 'btn btn-outline-dark w-100';
+                seeMoreBtn.textContent = `See More (${validImages.length - 3} more)`;
+                seeMoreBtn.style.cssText = 'padding: 12px; font-size: 1.1rem;';
+                
+                // Open modal starting at the 4th image (index 3)
+                seeMoreBtn.addEventListener('click', () => {
+                    openImageViewer(validImages, 3);
+                });
+                
+                seeMoreCol.appendChild(seeMoreBtn);
+                galleryContainer.appendChild(seeMoreCol);
+            }
         } else {
             gallerySection.classList.add('d-none');
         }
