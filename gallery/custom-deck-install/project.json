@@ -45,7 +45,8 @@
   "gallery": [
     { "url": "images/Custom Deck.jpg", "caption": "Completed custom deck with railings" },
     { "url": "images/Frame.jpg", "caption": "Deck framing structure" },
-    { "url": "images/Barn Frame.jpg", "caption": "Construction progress" }
+    { "url": "images/Barn Frame.jpg", "caption": "Construction progress" },
+    { "url": "images/Barn Finished.jpg", "caption": "Finished deck" }
   ],
 
   "highlights": [

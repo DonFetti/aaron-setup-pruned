@@ -75,6 +75,15 @@ function populateProjectData(project) {
     if (coverImage && project.coverImage) {
         coverImage.src = project.coverImage;
         coverImage.alt = project.title || 'Project cover image';
+        coverImage.style.cursor = 'pointer';
+        
+        // Add click to open in viewer (include cover image in gallery array)
+        coverImage.addEventListener('click', () => {
+            const allImages = project.gallery && Array.isArray(project.gallery) 
+                ? [{ url: project.coverImage, caption: project.title || 'Cover image' }, ...project.gallery.filter(img => img.url)]
+                : [{ url: project.coverImage, caption: project.title || 'Cover image' }];
+            openImageViewer(allImages, 0);
+        });
     }
     
     // Project Type Badges
@@ -160,9 +169,9 @@ function populateProjectData(project) {
                 img.className = 'card-img-top';
                 img.style.cssText = 'height: 250px; object-fit: cover; cursor: pointer;';
                 
-                // Add click to view larger (optional - could add modal later)
+                // Add click to open in modal viewer
                 img.addEventListener('click', () => {
-                    window.open(image.url, '_blank');
+                    openImageViewer(validImages, index);
                 });
                 
                 if (image.caption) {
@@ -352,5 +361,69 @@ function showError(message) {
     loadingState.classList.add('d-none');
     errorState.classList.remove('d-none');
     projectContent.classList.add('d-none');
+}
+
+/**
+ * Open image viewer modal
+ * @param {Array} images - Array of image objects
+ * @param {number} currentIndex - Current image index
+ */
+function openImageViewer(images, currentIndex) {
+    if (!images || images.length === 0) return;
+    
+    const modal = new bootstrap.Modal(document.getElementById('imageViewerModal'));
+    const modalImage = document.getElementById('modal-image');
+    const modalCaption = document.getElementById('modal-caption');
+    const modalTitle = document.getElementById('imageViewerModalLabel');
+    const imageCounter = document.getElementById('image-counter');
+    const prevBtn = document.getElementById('prev-image-btn');
+    const nextBtn = document.getElementById('next-image-btn');
+    
+    let currentIdx = currentIndex;
+    
+    function updateImage() {
+        const image = images[currentIdx];
+        modalImage.src = image.url;
+        modalImage.alt = image.caption || `Gallery image ${currentIdx + 1}`;
+        modalCaption.textContent = image.caption || '';
+        modalTitle.textContent = image.caption || `Image ${currentIdx + 1}`;
+        imageCounter.textContent = `${currentIdx + 1} / ${images.length}`;
+        
+        // Show/hide navigation buttons
+        prevBtn.style.display = images.length > 1 ? 'block' : 'none';
+        nextBtn.style.display = images.length > 1 ? 'block' : 'none';
+    }
+    
+    // Navigation handlers
+    prevBtn.onclick = () => {
+        currentIdx = (currentIdx - 1 + images.length) % images.length;
+        updateImage();
+    };
+    
+    nextBtn.onclick = () => {
+        currentIdx = (currentIdx + 1) % images.length;
+        updateImage();
+    };
+    
+    // Keyboard navigation
+    const handleKeyDown = (e) => {
+        if (e.key === 'ArrowLeft') {
+            currentIdx = (currentIdx - 1 + images.length) % images.length;
+            updateImage();
+        } else if (e.key === 'ArrowRight') {
+            currentIdx = (currentIdx + 1) % images.length;
+            updateImage();
+        }
+    };
+    
+    document.addEventListener('keydown', handleKeyDown);
+    
+    // Remove event listener when modal is hidden
+    document.getElementById('imageViewerModal').addEventListener('hidden.bs.modal', () => {
+        document.removeEventListener('keydown', handleKeyDown);
+    }, { once: true });
+    
+    updateImage();
+    modal.show();
 }
 
