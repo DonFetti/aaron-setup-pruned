@@ -128,8 +128,8 @@ function populateProjectData(project) {
             const dateSpan = document.createElement('span');
             dateSpan.className = 'text-muted';
             const dateParts = [];
-            if (project.dates.start) dateParts.push(formatDate(project.dates.start));
-            if (project.dates.end) dateParts.push(formatDate(project.dates.end));
+            if (project.dates.start) dateParts.push(project.dates.start);
+            if (project.dates.end) dateParts.push(project.dates.end);
             dateSpan.textContent = dateParts.join(' - ');
             projectMeta.appendChild(dateSpan);
         }
@@ -249,8 +249,8 @@ function populateProjectData(project) {
     if (datesSection && datesText) {
         if (project.dates && (project.dates.start || project.dates.end)) {
             const dateParts = [];
-            if (project.dates.start) dateParts.push(`Start: ${formatDate(project.dates.start)}`);
-            if (project.dates.end) dateParts.push(`End: ${formatDate(project.dates.end)}`);
+            if (project.dates.start) dateParts.push(`Start: ${project.dates.start}`);
+            if (project.dates.end) dateParts.push(`End: ${project.dates.end}`);
             datesText.textContent = dateParts.join('\n');
             datesText.style.whiteSpace = 'pre-line';
         } else {
@@ -349,25 +349,6 @@ function populateProjectData(project) {
     }
 }
 
-/**
- * Format date string for display
- * @param {string} dateString - Date string to format
- * @returns {string} - Formatted date or empty string
- */
-function formatDate(dateString) {
-    if (!dateString) return '';
-    
-    try {
-        const date = new Date(dateString);
-        if (isNaN(date.getTime())) return dateString; // Return original if invalid
-        
-        // Format as Month Day, Year (e.g., "May 1, 2024")
-        const options = { year: 'numeric', month: 'long', day: 'numeric' };
-        return date.toLocaleDateString('en-US', options);
-    } catch (error) {
-        return dateString; // Return original if parsing fails
-    }
-}
 
 /**
  * Show error message

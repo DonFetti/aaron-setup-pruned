@@ -191,6 +191,7 @@ function createProjectCard(project, template) {
     // Set status
     const status = card.querySelector('.project-status');
     if (status) {
+        
         status.textContent = project.status || '';
         // Hide if empty
         if (!project.status) {
@@ -204,10 +205,10 @@ function createProjectCard(project, template) {
     const dateSeparator = card.querySelector('.project-date-separator');
     
     if (dateStart && project.dates) {
-        dateStart.textContent = formatDate(project.dates.start) || '';
+        dateStart.textContent = project.dates.start || '';
     }
     if (dateEnd && project.dates) {
-        dateEnd.textContent = formatDate(project.dates.end) || '';
+        dateEnd.textContent = project.dates.end || '';
     }
     
     // Hide date separator if only one date
@@ -242,32 +243,6 @@ function createProjectCard(project, template) {
     return card;
 }
 
-/**
- * Format date string for display
- * @param {string} dateString - Date string to format
- * @returns {string} - Formatted date or empty string
- */
-function formatDate(dateString) {
-    if (!dateString) return '';
-    
-    try {
-        const date = new Date(dateString);
-        if (isNaN(date.getTime())) return dateString; // Return original if invalid
-        
-        // Format as MM/YYYY or MM/DD/YYYY
-        const month = date.getMonth() + 1;
-        const day = date.getDate();
-        const year = date.getFullYear();
-        
-        // If day is 1, assume it's just month/year
-        if (day === 1) {
-            return `${month}/${year}`;
-        }
-        return `${month}/${day}/${year}`;
-    } catch (error) {
-        return dateString; // Return original if parsing fails
-    }
-}
 
 /**
  * Display empty message when no projects found
