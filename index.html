@@ -184,19 +184,30 @@
             </div>
         </section>
         
-
         <section id="contact-section" class="contact-section">
-            <h2 class="text-center">Contact now for a Free Quote!</h2>
-            <div id="form-message" class="d-none mb-3 p-2 rounded"></div>
-            <form id="contact-form" onsubmit="submitForm(event)">
-                <label for="name">Name:</label>
-                <input type="text" id="name" name="name" required>
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required>
-                <label for="message">Message:</label>
-                <textarea id="message" name="message" required></textarea>
-                <button class="w-25 contact-btn" type="submit">Submit</button>
-            </form>
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-12 col-sm-10 col-md-8 col-lg-6 mb-4">
+                        <h2 class="text-center">Contact now for a Free Quote!</h2>
+                        <div id="form-message" class="d-none mb-3 p-2 rounded"></div>
+                        <form id="contact-form" onsubmit="submitForm(event)">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Name:</label>
+                                <input type="text" id="name" name="name" required class="form-control">
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email:</label>
+                                <input type="email" id="email" name="email" required class="form-control">
+                            </div>
+                            <div class="mb-3">
+                                <label for="message" class="form-label">Message:</label>
+                                <textarea id="message" name="message" required class="form-control"></textarea>
+                            </div>
+                            <button class="w-100 w-md-25 contact-btn" type="submit">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </section>
     </main>
     <footer class="bg-primary">
