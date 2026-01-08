@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "bootstrap": "^5.3.8",
+    "browser-sync": "^3.0.4"
+  },
+  "scripts": {
+    "start": "browser-sync start --server --files \"*.html, *.css, *.js\""
+  }
+}
