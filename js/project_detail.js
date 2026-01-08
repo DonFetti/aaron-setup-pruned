@@ -153,10 +153,11 @@ function populateProjectData(project) {
         const validImages = project.gallery.filter(img => img.url);
         
         if (validImages.length > 0) {
-            // Check if mobile device (using window width, Bootstrap breakpoint is 768px)
-            const isMobile = window.innerWidth < 768;
-            // On mobile, only show first 3 images in gallery, but all images available in modal
-            const imagesToDisplay = isMobile ? validImages.slice(0, 3) : validImages;
+            // Check if below lg breakpoint (using window width, Bootstrap lg breakpoint is 992px)
+            // This matches the breakpoint where the sidebar (col-lg-4) moves below the images
+            const isBelowLg = window.innerWidth < 992;
+            // On smaller screens, only show first 3 images in gallery, but all images available in modal
+            const imagesToDisplay = isBelowLg ? validImages.slice(0, 3) : validImages;
             
             galleryContainer.innerHTML = '';
             imagesToDisplay.forEach((image, displayIndex) => {
@@ -231,13 +232,14 @@ function populateProjectData(project) {
                 galleryContainer.appendChild(col);
             });
             
-            // Add "See More" button on mobile if there are more than 3 images
-            if (isMobile && validImages.length > 3) {
+            // Add "See More" button on screens below lg breakpoint if there are more than 3 images
+            // This matches the breakpoint where the sidebar (col-lg-4) moves below the images
+            if (isBelowLg && validImages.length > 3) {
                 const seeMoreCol = document.createElement('div');
                 seeMoreCol.className = 'col-12 mt-3';
                 
                 const seeMoreBtn = document.createElement('button');
-                seeMoreBtn.className = 'btn btn-outline-dark w-100';
+                seeMoreBtn.className = 'btn btn-outline-dark w-100 d-lg-none';
                 seeMoreBtn.textContent = `See More (${validImages.length - 3} more)`;
                 seeMoreBtn.style.cssText = 'padding: 12px; font-size: 1.1rem;';
                 
