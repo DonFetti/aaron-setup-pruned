@@ -1,5 +1,3 @@
 *.txt
-package-lock.json
-package.json
 node_modules/
 photo-list.js

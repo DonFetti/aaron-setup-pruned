@@ -144,6 +144,11 @@ function populateProjectData(project) {
     // Gallery
     const galleryContainer = document.getElementById('project-gallery');
     const gallerySection = document.getElementById('project-gallery-section');
+    // Store image elements for reuse in modal (prevents re-downloading)
+    if (!window.galleryImageCache) {
+        window.galleryImageCache = new Map();
+    }
+    
     if (galleryContainer && project.gallery && Array.isArray(project.gallery)) {
         const validImages = project.gallery.filter(img => img.url);
         
@@ -165,10 +170,46 @@ function populateProjectData(project) {
                 card.className = 'card shadow-sm';
                 
                 const img = document.createElement('img');
-                img.src = image.url;
                 img.alt = image.caption || `Gallery image ${originalIndex + 1}`;
                 img.className = 'card-img-top';
                 img.style.cssText = 'height: 250px; object-fit: cover; cursor: pointer;';
+                
+                // Store image element in cache for modal reuse
+                window.galleryImageCache.set(image.url, img);
+                
+                // Load first 2-3 images immediately (above the fold), lazy load the rest
+                const loadImmediately = displayIndex < 3;
+                
+                if (loadImmediately) {
+                    // Load immediately for first few images
+                    img.src = image.url;
+                } else {
+                    // Use lazy loading for images below the fold
+                    img.setAttribute('data-src', image.url);
+                    img.loading = 'lazy'; // Native lazy loading
+                    
+                    // Use Intersection Observer for lazy loading
+                    if ('IntersectionObserver' in window) {
+                        const imageObserver = new IntersectionObserver((entries, observer) => {
+                            entries.forEach(entry => {
+                                if (entry.isIntersecting) {
+                                    const imgElement = entry.target;
+                                    if (imgElement.dataset.src) {
+                                        imgElement.src = imgElement.dataset.src;
+                                        imgElement.removeAttribute('data-src');
+                                    }
+                                    observer.unobserve(imgElement);
+                                }
+                            });
+                        }, {
+                            rootMargin: '50px' // Start loading 50px before image enters viewport
+                        });
+                        imageObserver.observe(img);
+                    } else {
+                        // Fallback: load immediately if IntersectionObserver not supported
+                        img.src = image.url;
+                    }
+                }
                 
                 // Add click to open in modal viewer with all images, starting at clicked image
                 img.addEventListener('click', () => {
@@ -365,6 +406,16 @@ function showError(message) {
 }
 
 /**
+ * Preload an image
+ * @param {string} url - Image URL to preload
+ */
+function preloadImage(url) {
+    if (!url) return;
+    const img = new Image();
+    img.src = url;
+}
+
+/**
  * Open image viewer modal
  * @param {Array} images - Array of image objects
  * @param {number} currentIndex - Current image index
@@ -384,11 +435,29 @@ function openImageViewer(images, currentIndex) {
     
     function updateImage() {
         const image = images[currentIdx];
-        modalImage.src = image.url;
+        
+        // Check if image is already loaded in gallery cache
+        const cachedImg = window.galleryImageCache && window.galleryImageCache.get(image.url);
+        if (cachedImg && cachedImg.complete && cachedImg.naturalHeight !== 0) {
+            // Image is already loaded, reuse it (browser cache will handle it efficiently)
+            modalImage.src = image.url;
+        } else {
+            // Image not yet loaded, set src (will use browser cache if already downloaded)
+            modalImage.src = image.url;
+        }
+        
         modalImage.alt = image.caption || `Gallery image ${currentIdx + 1}`;
         modalCaption.textContent = image.caption || '';
         modalTitle.textContent = image.caption || `Image ${currentIdx + 1}`;
         imageCounter.textContent = `${currentIdx + 1} / ${images.length}`;
+        
+        // Preload adjacent images for smoother navigation
+        if (currentIdx > 0) {
+            preloadImage(images[currentIdx - 1].url);
+        }
+        if (currentIdx < images.length - 1) {
+            preloadImage(images[currentIdx + 1].url);
+        }
         
         // Show/hide navigation buttons
         prevBtn.style.display = images.length > 1 ? 'block' : 'none';
