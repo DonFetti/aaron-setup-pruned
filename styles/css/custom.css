@@ -321,4 +321,18 @@ form * {
 #project-team li,
 #project-highlights li {
   text-align: left !important;
+}
+#project-scope li:not(#project-team li),
+#project-materials li:not(#project-team li),
+#project-team li:not(#project-team li),
+#project-highlights li:not(#project-team li) {
+  padding-left: 1.8em;
+  position: relative;
+}
+#project-scope li:not(#project-team li) > span,
+#project-materials li:not(#project-team li) > span,
+#project-team li:not(#project-team li) > span,
+#project-highlights li:not(#project-team li) > span {
+  position: absolute;
+  left: 0;
 }/*# sourceMappingURL=custom.css.map */
