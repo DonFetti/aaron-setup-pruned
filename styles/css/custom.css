@@ -310,6 +310,21 @@ form * {
   border-top-width: 2px !important;
 }
 
+.textclamp {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.5;
+  word-break: break-word;
+  max-height: 4.5rem;
+  min-height: 0;
+  flex-shrink: 1;
+  flex-basis: auto;
+}
+
 #project-scope,
 #project-materials,
 #project-team,

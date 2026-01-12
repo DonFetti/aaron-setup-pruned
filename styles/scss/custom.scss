@@ -357,6 +357,24 @@ form {
     border-top-width: 2px !important;
 }
 
+// Text Clamp Utility
+.textclamp {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.5;
+    word-break: break-word;
+    // Hard limit: font-size (1rem) * line-height (1.5) * number of lines (3) = 4.5rem
+    max-height: 4.5rem;
+    min-height: 0; // Important for flexbox children
+    // Ensure it doesn't expand beyond clamped height
+    flex-shrink: 1;
+    flex-basis: auto;
+}
+
 // Project Detail Page - Override global ul text-align center
 #project-scope,
 #project-materials,
