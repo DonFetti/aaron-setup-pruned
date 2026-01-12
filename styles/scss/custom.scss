@@ -185,8 +185,37 @@ p {
 }
 
 .overlay {
-    background: $color-overlay;
+    background: linear-gradient(to top, rgba(20, 24, 28, 0.95), rgba(20, 24, 28, 0.88));
     width: 100%;
+    z-index: 1;
+    padding: 1.5rem 1rem 1.25rem;
+    
+    @media (min-width: 768px) {
+        padding: 2rem 1rem 1.75rem;
+    }
+
+    img {
+        width: 70px;
+        height: 70px;
+        object-fit: contain;
+        background: white;
+        border-radius: 50%;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        margin-bottom: 0.75rem;
+        transition: transform 0.3s ease;
+        
+        @media (min-width: 768px) {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 1rem;
+        }
+    }
+
+    h1 {
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8), 0 4px 16px rgba(0, 0, 0, 0.4);
+        letter-spacing: 0.5px;
+        margin-bottom: 0;
+    }
 }
 
 // Services section styling (now using Bootstrap grid)
@@ -331,10 +360,6 @@ form {
     transform: translateX(-50%);
 }
 
-// Overlay z-index
-.overlay {
-    z-index: 1;
-}
 
 // Owner info link styling
 .owner-info-link {
