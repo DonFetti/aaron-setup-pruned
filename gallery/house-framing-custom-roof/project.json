@@ -1,0 +1,91 @@
+{
+  "slug": "house-framing-custom-roof",
+  "title": "6000sqft House Framing with Custom Roof",
+  "projectType": [
+    "Carpentry",
+    "Framing",
+    "Residential"
+  ],
+  "status": "Completed",
+  "location": {
+    "city": "Welland",
+    "province": "Ontario"
+  },
+  "client": {
+    "name": ""
+  },
+  "description": "Fully custom framing of a 6000sqft home featuring a large pitched roof and many unique features. Work included comprehensive custom interior framing with high-end windows and doors throughout.",
+  "dates": {
+    "start": "",
+    "end": ""
+  },
+  "scopeOfWork": [],
+  "materials": [],
+  "team": [
+    {
+      "name": "Aaron Spierenburg",
+      "role": "Lead Carpenter"
+    }
+  ],
+  "coverImage": "gallery/house-framing-custom-roof/images/IMG_20220720_154808.webp",
+  "gallery": [
+    {
+      "url": "gallery/house-framing-custom-roof/images/IMG_20220630_070345.webp",
+      "caption": ""
+    },
+    {
+      "url": "gallery/house-framing-custom-roof/images/IMG_20220630_070704.webp",
+      "caption": ""
+    },
+    {
+      "url": "gallery/house-framing-custom-roof/images/IMG_20220630_144821.webp",
+      "caption": ""
+    },
+    {
+      "url": "gallery/house-framing-custom-roof/images/IMG_20220630_144853.webp",
+      "caption": ""
+    },
+    {
+      "url": "gallery/house-framing-custom-roof/images/IMG_20220713_120621.webp",
+      "caption": ""
+    },
+    {
+      "url": "gallery/house-framing-custom-roof/images/IMG_20220720_154808.webp",
+      "caption": ""
+    },
+    {
+      "url": "gallery/house-framing-custom-roof/images/IMG_20220721_120931_01.webp",
+      "caption": ""
+    },
+    {
+      "url": "gallery/house-framing-custom-roof/images/IMG_20220721_140734.webp",
+      "caption": ""
+    },
+    {
+      "url": "gallery/house-framing-custom-roof/images/IMG_20220721_140736.webp",
+      "caption": ""
+    },
+    {
+      "url": "gallery/house-framing-custom-roof/images/IMG_20220727_161021.webp",
+      "caption": ""
+    },
+    {
+      "url": "gallery/house-framing-custom-roof/images/IMG_20220727_161049.webp",
+      "caption": ""
+    },
+    {
+      "url": "gallery/house-framing-custom-roof/images/IMG_20220727_161141.webp",
+      "caption": ""
+    },
+    {
+      "url": "gallery/house-framing-custom-roof/images/IMG_20220812_153932.webp",
+      "caption": ""
+    },
+    {
+      "url": "gallery/house-framing-custom-roof/images/_storage_emulated_0_DCIM_Camera_IMG_20220630_144811.webp",
+      "caption": ""
+    }
+  ],
+  "highlights": [],
+  "createdAt": ""
+}
