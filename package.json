@@ -4,6 +4,6 @@
     "browser-sync": "^3.0.4"
   },
   "scripts": {
-    "start": "browser-sync start --server --files \"*.html, *.css, *.js\""
+    "start": "browser-sync start --server --files \"*.html, *.css, *.js, **/*.json\""
   }
 }

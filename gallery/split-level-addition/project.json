@@ -1,43 +1,58 @@
 {
-  "slug": "",
-  "title": "",
-  "projectType": ["Carpentry"],
-  "status": "",
-
+  "slug": "split-level-addition",
+  "title": "Split-Level Addition",
+  "projectType": [
+    "Split-level Addition",
+    "Residential",
+    "Framing",
+    "Foundation"
+  ],
+  "status": "Completed",
   "location": {
-    "city": "",
-    "province": ""
+    "city": "Dorset",
+    "province": "Ontario"
   },
-
   "client": {
     "name": ""
   },
-
-  "description": "",
-
+  "description": "Client needed a way to access his cottage that was down a steep hill, and wanted some extra space. We framed an addition to bridge the height difference, providing the client with a safe and elegant staircase to access the main cottage below.",
   "dates": {
-    "start": "",
+    "start": "Spring 2025",
     "end": ""
   },
-
   "scopeOfWork": [],
-
   "materials": [],
-
   "team": [
-    { "name": "", "role": "" },
-    { "name": "", "role": "" }
+    {
+      "name": "Aaron Spierenburg",
+      "role": "Lead Carpenter"
+    }
   ],
-
-  "coverImage": "",
-
+  "coverImage": "gallery/split-level-addition/images/IMG_20220510_173801.webp",
   "gallery": [
-    { "url": "", "caption": "" },
-    { "url": "", "caption": "" },
-    { "url": "", "caption": "" }
+    {
+      "url": "gallery/split-level-addition/images/IMG_20220509_064314.webp",
+      "caption": ""
+    },
+    {
+      "url": "gallery/split-level-addition/images/IMG_20220509_071042.webp",
+      "caption": ""
+    },
+    {
+      "url": "gallery/split-level-addition/images/IMG_20220509_174428.webp",
+      "caption": ""
+    },
+    {
+      "url": "gallery/split-level-addition/images/IMG_20220510_173801.webp",
+      "caption": ""
+    },
+    {
+      "url": "gallery/split-level-addition/images/IMG_20220510_194729.webp",
+      "caption": ""
+    }
   ],
-
-  "highlights": [],
-
+  "highlights": [
+    "Foundation built atop bedrock due to challenging terrain and cost considerations, eliminating the need for extensive blasting operations"
+  ],
   "createdAt": ""
 }

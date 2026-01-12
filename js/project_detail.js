@@ -1,5 +1,5 @@
 /**
- * Load and display project details based on slug from URL parameter
+ * Load and display project details based on slug from URL parameter into project.html
  */
 
 document.addEventListener('DOMContentLoaded', function() {
