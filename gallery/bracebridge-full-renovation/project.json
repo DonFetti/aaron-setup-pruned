@@ -1,0 +1,129 @@
+{
+  "slug": "bracebridge-full-renovation",
+  "title": "Full Renovation",
+  "projectType": [
+    "Renovation",
+    "Drywall",
+    "Flooring",
+    "Tongue and Groove",
+    "Trim",
+    "Framing",
+    "Residential"
+  ],
+  "status": "Ongoing",
+  "location": {
+    "city": "Bracebridge",
+    "province": "Ontario"
+  },
+  "client": {
+    "name": "Northern Oakes"
+  },
+  "description": "Comprehensive full-home renovation addressing extensive water damage, executed systematically from basement to main level. Basement work included structural framing preparation, installation of soundproofing membrane, complete drywall installation and finishing, extensive subfloor repair, waterproof composite click flooring installation, and elegant cedar tongue-and-groove wall treatment with trim work. Main level renovation involved complete removal of existing cedar tongue-and-groove and insulation, followed by new insulation installation with properly sealed poly vapor barrier, reinstallation of cedar tongue-and-groove throughout, and comprehensive floor and wall preparation for new kitchen installation.",
+  "dates": {
+    "start": "Fall 2025",
+    "end": ""
+  },
+  "scopeOfWork": [
+    "Basement framing preparation for drywall",
+    "Soundproofing membrane installation (SonoPan)",
+    "Drywall installation",
+    "Drywall mudding and finishing",
+    "Extensive subfloor repair and remediation",
+    "Waterproof composite click flooring installation",
+    "Cedar tongue-and-groove installation (basement)",
+    "Trim work and finish carpentry",
+    "Handrail framing and installation",
+    "Composite deck boards and fascia installation",
+    "Main level cedar tongue-and-groove removal",
+    "Insulation removal and replacement",
+    "Vapor barrier installation (poly, taped and sealed)",
+    "Main level cedar tongue-and-groove reinstallation",
+    "Floor and wall preparation for kitchen installation"
+  ],
+  "materials": [
+    "Spruce framing lumber",
+    "Drywall",
+    "SonoPan soundproofing membrane",
+    "Waterproof composite click flooring",
+    "Fine finish cedar tongue-and-groove",
+    "Water-resistant subfloor materials",
+    "Composite deck boards",
+    "Fascia materials",
+    "Insulation",
+    "Vapor barrier poly"
+  ],
+  "team": [
+    {
+      "name": "Aaron Spierenburg",
+      "role": "Lead Carpenter"
+    }
+  ],
+  "coverImage": "gallery/bracebridge-full-renovation/images/482a0ef2-55f1-4bc8-81c8-4424122fe148.webp",
+  "gallery": [
+    {
+      "url": "gallery/bracebridge-full-renovation/images/1f468932-1136-470c-97b3-676f7cc0d3ce.webp",
+      "caption": ""
+    },
+    {
+      "url": "gallery/bracebridge-full-renovation/images/415dfe95-e840-4b70-adae-204bc4f73ce5.webp",
+      "caption": ""
+    },
+    {
+      "url": "gallery/bracebridge-full-renovation/images/482a0ef2-55f1-4bc8-81c8-4424122fe148.webp",
+      "caption": ""
+    },
+    {
+      "url": "gallery/bracebridge-full-renovation/images/99dca489-0b17-4491-ba0b-7147901f1b81.webp",
+      "caption": ""
+    },
+    {
+      "url": "gallery/bracebridge-full-renovation/images/IMG_20251104_172510.webp",
+      "caption": ""
+    },
+    {
+      "url": "gallery/bracebridge-full-renovation/images/IMG_20251211_122842.webp",
+      "caption": ""
+    },
+    {
+      "url": "gallery/bracebridge-full-renovation/images/IMG_20251211_122853.webp",
+      "caption": ""
+    },
+    {
+      "url": "gallery/bracebridge-full-renovation/images/IMG_20251211_143810.webp",
+      "caption": ""
+    },
+    {
+      "url": "gallery/bracebridge-full-renovation/images/IMG_20251212_125836.webp",
+      "caption": ""
+    },
+    {
+      "url": "gallery/bracebridge-full-renovation/images/IMG_20251217_124341.webp",
+      "caption": ""
+    },
+    {
+      "url": "gallery/bracebridge-full-renovation/images/IMG_20251217_144406.webp",
+      "caption": ""
+    },
+    {
+      "url": "gallery/bracebridge-full-renovation/images/IMG_20251217_145714.webp",
+      "caption": ""
+    },
+    {
+      "url": "gallery/bracebridge-full-renovation/images/IMG_20251217_151702.webp",
+      "caption": ""
+    },
+    {
+      "url": "gallery/bracebridge-full-renovation/images/IMG_20251217_154157.webp",
+      "caption": ""
+    }
+  ],
+  "highlights": [
+    "Comprehensive water damage remediation from basement to main level",
+    "Systematic approach ensuring structural integrity before finishing work",
+    "Advanced soundproofing installation for enhanced acoustic performance",
+    "Waterproof composite flooring providing long-term moisture protection",
+    "Elegant cedar tongue-and-groove treatment creating warm, natural aesthetic",
+    "Complete insulation and vapor barrier upgrade ensuring energy efficiency and moisture control"
+  ],
+  "createdAt": "2025-01-06"
+}
