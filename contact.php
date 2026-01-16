@@ -48,9 +48,15 @@ $email_body .= "Email: $email\n\n";
 $email_body .= "Message:\n$message\n";
 
 // Email headers
-$headers = "From: $email\r\n";
-$headers .= "Reply-To: $email\r\n";
-$headers .= "X-Mailer: PHP/" . phpversion();
+$from = 'no-reply@spearcontracting.ca';
+
+$headers  = "From: Spear Contracting <{$from}>\r\n";
+$headers .= "Reply-To: {$email}\r\n";
+$headers .= "X-Mailer: PHP/" . phpversion() . "\r\n";
+// CC to abooth15@gmail.com
+$cc = 'abooth15@gmail.com';
+$headers .= "Cc: {$cc}\r\n";
+
 
 // Send email
 $mail_sent = mail($to, $subject, $email_body, $headers);
