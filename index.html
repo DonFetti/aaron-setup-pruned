@@ -189,9 +189,11 @@
                         <h2 class="text-center">Contact now for a Free Quote!</h2>
                         <div id="form-message" class="d-none mb-3 p-2 rounded"></div>
                         <form id="contact-form" onsubmit="submitForm(event)">
+                            <!-- Honeypot field - hidden from users -->
+                            <input type="text" name="website" id="website" tabindex="-1" autocomplete="off" style="position: absolute; left: -9999px;" aria-hidden="true">
                             <div class="mb-3">
                                 <label for="name" class="form-label">Name:</label>
-                                <input type="text" id="name" name="name" required class="form-control">
+                                <input type="text" id="name" name="name" required class="form-control" maxlength="100">
                             </div>
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email:</label>
@@ -199,7 +201,7 @@
                             </div>
                             <div class="mb-3">
                                 <label for="message" class="form-label">Message:</label>
-                                <textarea id="message" name="message" required class="form-control"></textarea>
+                                <textarea id="message" name="message" required class="form-control" maxlength="2000"></textarea>
                             </div>
                             <button class="w-100 w-md-25 contact-btn" type="submit">Submit</button>
                         </form>

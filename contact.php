@@ -19,11 +19,33 @@ if ($is_direct_access && $_SERVER['REQUEST_METHOD'] !== 'POST') {
 $name = isset($_POST['name']) ? trim($_POST['name']) : '';
 $email = isset($_POST['email']) ? trim($_POST['email']) : '';
 $message = isset($_POST['message']) ? trim($_POST['message']) : '';
+$honeypot = isset($_POST['website']) ? trim($_POST['website']) : '';
+
+// Honeypot check - reject if filled
+if (!empty($honeypot)) {
+    http_response_code(400);
+    echo json_encode(['status' => 'error', 'message' => 'Invalid submission']);
+    exit;
+}
 
 // Validate required fields
 if (empty($name) || empty($email) || empty($message)) {
     http_response_code(400);
     echo json_encode(['status' => 'error', 'message' => 'All fields are required']);
+    exit;
+}
+
+// Length caps validation
+$maxNameLength = 100;
+$maxMessageLength = 2000;
+if (strlen($name) > $maxNameLength) {
+    http_response_code(400);
+    echo json_encode(['status' => 'error', 'message' => 'Name is too long. Maximum ' . $maxNameLength . ' characters allowed.']);
+    exit;
+}
+if (strlen($message) > $maxMessageLength) {
+    http_response_code(400);
+    echo json_encode(['status' => 'error', 'message' => 'Message is too long. Maximum ' . $maxMessageLength . ' characters allowed.']);
     exit;
 }
 
@@ -34,7 +56,23 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     exit;
 }
 
+// Block CR/LF in email (prevent header injection)
+if (strpos($email, "\r") !== false || strpos($email, "\n") !== false) {
+    http_response_code(400);
+    echo json_encode(['status' => 'error', 'message' => 'Invalid email address']);
+    exit;
+}
+
+// Block CR/LF in name (prevent injection in subject/body)
+if (strpos($name, "\r") !== false || strpos($name, "\n") !== false) {
+    http_response_code(400);
+    echo json_encode(['status' => 'error', 'message' => 'Invalid name format']);
+    exit;
+}
+
 // Sanitize inputs
+// Strip CR/LF from name (already validated, but double-check)
+$name = str_replace(["\r", "\n"], '', $name);
 $name = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
 $email = filter_var($email, FILTER_SANITIZE_EMAIL);
 $message = htmlspecialchars($message, ENT_QUOTES, 'UTF-8');
@@ -50,8 +88,11 @@ $email_body .= "Message:\n$message\n";
 // Email headers
 $from = 'no-reply@spearcontracting.ca';
 
+// Sanitize email for headers (already validated for CR/LF, but double-check)
+$safeEmail = str_replace(["\r", "\n"], '', $email);
+
 $headers  = "From: Spear Contracting <{$from}>\r\n";
-$headers .= "Reply-To: {$email}\r\n";
+$headers .= "Reply-To: {$safeEmail}\r\n";
 $headers .= "X-Mailer: PHP/" . phpversion() . "\r\n";
 // CC to abooth15@gmail.com
 $cc = 'abooth15@gmail.com';
