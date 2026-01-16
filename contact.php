@@ -19,6 +19,7 @@ if ($is_direct_access && $_SERVER['REQUEST_METHOD'] !== 'POST') {
 $name = isset($_POST['name']) ? trim($_POST['name']) : '';
 $email = isset($_POST['email']) ? trim($_POST['email']) : '';
 $message = isset($_POST['message']) ? trim($_POST['message']) : '';
+$timeline = isset($_POST['timeline']) ? trim($_POST['timeline']) : '';
 $honeypot = isset($_POST['website']) ? trim($_POST['website']) : '';
 
 // Honeypot check - reject if filled
@@ -76,14 +77,22 @@ $name = str_replace(["\r", "\n"], '', $name);
 $name = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
 $email = filter_var($email, FILTER_SANITIZE_EMAIL);
 $message = htmlspecialchars($message, ENT_QUOTES, 'UTF-8');
+// Sanitize timeline (optional field)
+if (!empty($timeline)) {
+    $timeline = str_replace(["\r", "\n"], '', $timeline);
+    $timeline = htmlspecialchars($timeline, ENT_QUOTES, 'UTF-8');
+}
 
 // Email configuration
 $to = 'aaron@spearcontracting.ca';
 $subject = 'New Contact Form Submission from ' . $name;
 $email_body = "You have received a new contact form submission:\n\n";
 $email_body .= "Name: $name\n";
-$email_body .= "Email: $email\n\n";
-$email_body .= "Message:\n$message\n";
+$email_body .= "Email: $email\n";
+if (!empty($timeline)) {
+    $email_body .= "Estimated Timeline: $timeline\n";
+}
+$email_body .= "\nMessage:\n$message\n";
 
 // Email headers
 $from = 'no-reply@spearcontracting.ca';
