@@ -1,6 +1,6 @@
 // Variables
-$font-copperplate: "Copperplate";
-$font-path: '/font/Copperplate.otf';
+$font-montserrat: "Montserrat", sans-serif;
+$font-copperplate: "Copperplate", "Copperplate Gothic", serif;
 $color-gold: #c49528;
 $color-gold-hover: #a27b20;
 $color-brown: #84641c;
@@ -13,24 +13,16 @@ $color-gradient-end: #ffffff;
 $color-gray: #757070;
 $color-gray-light: rgb(116, 116, 114);
 
-// Font Face
-@font-face {
-    font-family: $font-copperplate;
-    src: url($font-path) format('otf');
-    font-weight: normal;
-    font-style: normal;
-}
-
 // Base Styles
 html {
-    font-size: 18px; // Increased from 16px for better readability with Copperplate
-    font-family: $font-copperplate, "Copperplate Gothic", serif;
+    font-size: 18px;
+    font-family: $font-montserrat;
 }
 
 body {
     display: flex;
     flex-direction: column;
-    font-family: $font-copperplate, "Copperplate Gothic", serif;
+    font-family: $font-montserrat;
 }
 
 main {
@@ -42,9 +34,25 @@ p {
     color: $color-text;
 }
 
+// Top-level page titles use Copperplate (accent font)
+h1 {
+    font-family: $font-copperplate;
+    text-transform: uppercase;
+    font-weight: bold;
+    -webkit-text-stroke: 0.5px;
+    text-stroke: 0.5px;
+    letter-spacing: 0.5px;
+}
+
+// All other headings use Montserrat with appropriate weights
+h2, h3, h4, h5, h6 {
+    font-family: $font-montserrat;
+    text-transform: none; // Allow lowercase for better readability
+}
+
 h2 {
     font-size: 2.5rem;
-    font-weight: bold;
+    font-weight: 700; // Montserrat Bold
 }
 
 ul {
@@ -78,7 +86,7 @@ li {
 
 // Footer
 .footer-div {
-    font-family: Copperplate;
+    font-family: $font-montserrat;
     text-transform: uppercase;
     font-weight: 1000 !important;
 
@@ -236,6 +244,12 @@ p {
 
 .about-header {
     font-size: 2.9rem;
+    font-family: $font-copperplate; // Top-level page title uses Copperplate
+    text-transform: uppercase;
+    font-weight: bold;
+    -webkit-text-stroke: 0.5px;
+    text-stroke: 0.5px;
+    letter-spacing: 0.5px;
 }
 
 // Contact
@@ -266,6 +280,9 @@ p {
     margin-top: 2vh;
     font-size: 2rem;
     text-decoration: underline;
+    font-family: $font-montserrat;
+    font-weight: 600; // Montserrat SemiBold/Medium
+    text-transform: none; // Allow lowercase for better readability
 }
 
 .services-description {
@@ -382,6 +399,11 @@ form {
 // About banner border
 #about-banner {
     border-top-width: 2px !important;
+}
+
+// Gallery Project Card Titles
+.project-title {
+    font-weight: 600; // Montserrat SemiBold for more weight
 }
 
 // Text Clamp Utility

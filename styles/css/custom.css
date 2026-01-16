@@ -1,18 +1,12 @@
-@font-face {
-  font-family: "Copperplate";
-  src: url("/font/Copperplate.otf") format("otf");
-  font-weight: normal;
-  font-style: normal;
-}
 html {
   font-size: 18px;
-  font-family: "Copperplate", "Copperplate Gothic", serif;
+  font-family: "Montserrat", sans-serif;
 }
 
 body {
   display: flex;
   flex-direction: column;
-  font-family: "Copperplate", "Copperplate Gothic", serif;
+  font-family: "Montserrat", sans-serif;
 }
 
 main {
@@ -24,9 +18,23 @@ p {
   color: #231a1a;
 }
 
+h1 {
+  font-family: "Copperplate", "Copperplate Gothic", serif;
+  text-transform: uppercase;
+  font-weight: bold;
+  -webkit-text-stroke: 0.5px;
+  text-stroke: 0.5px;
+  letter-spacing: 0.5px;
+}
+
+h2, h3, h4, h5, h6 {
+  font-family: "Montserrat", sans-serif;
+  text-transform: none;
+}
+
 h2 {
   font-size: 2.5rem;
-  font-weight: bold;
+  font-weight: 700;
 }
 
 ul {
@@ -55,7 +63,7 @@ li {
 }
 
 .footer-div {
-  font-family: Copperplate;
+  font-family: "Montserrat", sans-serif;
   text-transform: uppercase;
   font-weight: 1000 !important;
 }
@@ -213,6 +221,12 @@ li {
 
 .about-header {
   font-size: 2.9rem;
+  font-family: "Copperplate", "Copperplate Gothic", serif;
+  text-transform: uppercase;
+  font-weight: bold;
+  -webkit-text-stroke: 0.5px;
+  text-stroke: 0.5px;
+  letter-spacing: 0.5px;
 }
 
 .contact-btn {
@@ -241,6 +255,9 @@ li {
   margin-top: 2vh;
   font-size: 2rem;
   text-decoration: underline;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  text-transform: none;
 }
 
 .services-description {
@@ -336,6 +353,10 @@ form * {
 
 #about-banner {
   border-top-width: 2px !important;
+}
+
+.project-title {
+  font-weight: 600;
 }
 
 .textclamp {
