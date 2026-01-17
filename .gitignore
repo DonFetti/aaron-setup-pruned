@@ -17,5 +17,4 @@ photo-list.js
 *.aac
 *.heic
 photo-del.js
-api/rate_limit/
 rsync.exclude

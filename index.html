@@ -215,6 +215,11 @@
                                 <label for="message" class="form-label">Message:</label>
                                 <textarea id="message" name="message" required class="form-control" maxlength="2000"></textarea>
                             </div>
+                            <div class="mb-3">
+                                <label for="images" class="form-label">Photos (optional, max 5 files, 8MB each):</label>
+                                <input type="file" id="images" name="images[]" accept=".jpg,.jpeg,.png,.heic" multiple class="form-control">
+                                <small class="form-text text-muted">Accepted formats: JPG, JPEG, PNG, HEIC</small>
+                            </div>
                             <button class="w-100 w-md-25 contact-btn" type="submit">Submit</button>
                         </form>
                     </div>
