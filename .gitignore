@@ -18,3 +18,5 @@ photo-list.js
 *.heic
 photo-del.js
 rsync.exclude
+.htaccess
+php.ini
