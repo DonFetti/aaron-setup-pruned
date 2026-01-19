@@ -107,38 +107,6 @@ li {
   }
 }
 
-@media (max-width: 400px) {
-  h1 {
-    font-size: 1rem;
-  }
-}
-@media (min-width: 768px) {
-  h1 {
-    font-size: 3rem;
-  }
-}
-@media (max-width: 767px) {
-  h1 {
-    font-size: 2rem;
-  }
-}
-
-@media (min-width: 768px) {
-  p {
-    font-size: 1.5rem;
-  }
-}
-@media (max-width: 767px) {
-  p {
-    font-size: 1rem;
-  }
-}
-@media (min-width: 1200px) {
-  p {
-    font-size: 2rem;
-  }
-}
-
 @media (min-width: 768px) {
   #slideshow {
     position: relative;
@@ -218,6 +186,11 @@ li {
   background: linear-gradient(to bottom, #d3b886, #ffffff);
   padding-top: 3vh;
 }
+@media (min-width: 768px) {
+  .about p {
+    font-size: 2rem;
+  }
+}
 
 .about-header {
   font-size: 2.9rem;
@@ -227,6 +200,11 @@ li {
   -webkit-text-stroke: 0.5px;
   text-stroke: 0.5px;
   letter-spacing: 0.5px;
+}
+@media (max-width: 767px) {
+  .about-header {
+    font-size: 2rem;
+  }
 }
 
 .contact-btn {

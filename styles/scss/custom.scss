@@ -44,6 +44,7 @@ h1 {
     letter-spacing: 0.5px;
 }
 
+
 // All other headings use Montserrat with appropriate weights
 h2, h3, h4, h5, h6 {
     font-family: $font-montserrat;
@@ -125,35 +126,6 @@ li {
 .logo-spacing {
     @media (min-width: 992px) {
         margin-left: 50px;
-    }
-}
-
-// Typography Responsive
-h1 {
-    @media (max-width: 400px) {
-        font-size: 1rem;
-    }
-
-    @media (min-width: 768px) {
-        font-size: 3rem;
-    }
-
-    @media (max-width: 767px) {
-        font-size: 2rem;
-    }
-}
-
-p {
-    @media (min-width: 768px) {
-        font-size: 1.5rem;
-    }
-
-    @media (max-width: 767px) {
-        font-size: 1rem;
-    }
-
-    @media (min-width: 1200px) {
-        font-size: 2rem;
     }
 }
 
@@ -240,6 +212,11 @@ p {
 .about {
     background: linear-gradient(to bottom, $color-gradient-start, $color-gradient-end);
     padding-top: 3vh;
+    p{
+        @media (min-width:768px){
+            font-size: 2rem;
+        }
+    }
 }
 
 .about-header {
@@ -250,6 +227,9 @@ p {
     -webkit-text-stroke: 0.5px;
     text-stroke: 0.5px;
     letter-spacing: 0.5px;
+    @media (max-width:767px){
+        font-size: 2rem;
+    }
 }
 
 // Contact
