@@ -237,7 +237,7 @@ function createProjectCard(project, template) {
     // Set project link
     const projectLink = card.querySelector('.project-link');
     if (projectLink && project.slug) {
-        projectLink.href = `../project.html?slug=${encodeURIComponent(project.slug)}`;
+        projectLink.href = `../project?slug=${encodeURIComponent(project.slug)}`;
         projectLink.setAttribute('data-project-slug', project.slug);
     } else if (projectLink) {
         // Disable link if no slug
