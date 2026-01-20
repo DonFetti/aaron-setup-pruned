@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
  */
 async function loadProjects() {
     try {
-        const response = await fetch('gallery/index.json');
+        const response = await fetch('index.json');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -49,8 +49,8 @@ async function loadProjectBySlug(slug) {
         return null;
     }
     
-    // Try the direct path first: gallery/{slug}/project.json
-    const directPath = `gallery/${slug}/project.json`;
+    // Try the direct path first: {slug}/project.json (relative to gallery directory)
+    const directPath = `${slug}/project.json`;
     
     try {
         const response = await fetch(directPath);
@@ -124,7 +124,12 @@ function createProjectCard(project, template) {
     // Set cover image
     const coverImage = card.querySelector('.project-cover-image');
     if (coverImage) {
-        coverImage.src = project.coverImage || '';
+        // Fix image path for gallery subdirectory - remove 'gallery/' prefix if present
+        let imagePath = project.coverImage || '';
+        if (imagePath.startsWith('gallery/')) {
+            imagePath = imagePath.substring(8); // Remove 'gallery/' prefix
+        }
+        coverImage.src = imagePath;
         coverImage.alt = project.title || 'Project image';
     }
     
@@ -232,7 +237,7 @@ function createProjectCard(project, template) {
     // Set project link
     const projectLink = card.querySelector('.project-link');
     if (projectLink && project.slug) {
-        projectLink.href = `project.html?slug=${encodeURIComponent(project.slug)}`;
+        projectLink.href = `../project.html?slug=${encodeURIComponent(project.slug)}`;
         projectLink.setAttribute('data-project-slug', project.slug);
     } else if (projectLink) {
         // Disable link if no slug
