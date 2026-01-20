@@ -188,7 +188,7 @@ cleanupExpiredTokens($tokensDir, $uploadsDir);
     </main>
     <footer class="bg-primary">
         <div class="text-center">
-            <p class="d-inline small text-secondary">Copyright &copy; 2024 Spear Contracting</p>
+            <p class="d-inline small text-secondary">Copyright &copy; 2025 Spear Contracting</p>
         </div>
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
