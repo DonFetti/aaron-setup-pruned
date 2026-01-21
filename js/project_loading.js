@@ -4,7 +4,9 @@
  */
 
 document.addEventListener('DOMContentLoaded', function() {
-    loadProjects();
+    loadProjects().then(() => {
+        setupProjectClickListeners();
+    });
 });
 
 /**
@@ -277,3 +279,20 @@ function displayErrorMessage(message) {
     }
 }
 
+/**
+ * Set up click event listener using event delegation on gallery container
+ * This handles clicks on all project cards, even dynamically added ones
+ */
+function setupProjectClickListeners() {
+    document.querySelectorAll('[data-project-slug]').forEach((card)=> {
+        card.addEventListener('click', function() {
+            if (window.pushProject) {
+                const projectSlug = card.getAttribute('data-project-slug');
+                window.pushProject({
+                slug : projectSlug
+                })
+            }
+        });
+        
+    })
+}

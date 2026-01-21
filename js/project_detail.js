@@ -52,7 +52,7 @@ async function loadProjectBySlug(slug) {
         projectContent.classList.remove('d-none');
         
         // Populate project data
-        populateProjectData(project);
+        populateProjectData(project, slug);
         
         // Update page title
         document.title = `${project.title} | Project Details`;
@@ -68,8 +68,9 @@ async function loadProjectBySlug(slug) {
 /**
  * Populate all project data into the page
  * @param {Object} project - Project data object
+ * @param {string} slug - Project slug
  */
-function populateProjectData(project) {
+function populateProjectData(project, slug) {
     // Cover Image
     const coverImage = document.getElementById('project-cover-image');
     if (coverImage && project.coverImage) {
@@ -214,7 +215,7 @@ function populateProjectData(project) {
                 
                 // Add click to open in modal viewer with all images, starting at clicked image
                 img.addEventListener('click', () => {
-                    openImageViewer(validImages, originalIndex);
+                    openImageViewer(validImages, originalIndex, slug);
                 });
                 
                 if (image.caption) {
@@ -245,7 +246,7 @@ function populateProjectData(project) {
                 
                 // Open modal starting at the 4th image (index 3)
                 seeMoreBtn.addEventListener('click', () => {
-                    openImageViewer(validImages, 3);
+                    openImageViewer(validImages, 3, slug);
                 });
                 
                 seeMoreCol.appendChild(seeMoreBtn);
@@ -421,8 +422,9 @@ function preloadImage(url) {
  * Open image viewer modal
  * @param {Array} images - Array of image objects
  * @param {number} currentIndex - Current image index
+ * @param {string} slug - Project slug
  */
-function openImageViewer(images, currentIndex) {
+function openImageViewer(images, currentIndex, slug) {
     if (!images || images.length === 0) return;
     
     const modal = new bootstrap.Modal(document.getElementById('imageViewerModal'));
@@ -452,6 +454,14 @@ function openImageViewer(images, currentIndex) {
         modalCaption.textContent = image.caption || '';
         modalTitle.textContent = image.caption || `Image ${currentIdx + 1}`;
         imageCounter.textContent = `${currentIdx + 1} / ${images.length}`;
+        
+        // Track image view in GTM
+        if (window.pushImgView && slug) {
+            window.pushImgView({
+                'image_index': `${currentIdx + 1}`,
+                'slug': slug
+            });
+        }
         
         // Preload adjacent images for smoother navigation
         if (currentIdx > 0) {

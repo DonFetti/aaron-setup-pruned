@@ -77,6 +77,11 @@ function submitForm(event) {
             formMessage.textContent = data.message;
 
             if (data.status === 'success') {
+                if (window.pushLead){
+                    window.pushLead({
+                        form:'contact-form'
+                    })
+                }
                 form.reset();
                 setTimeout(() => {
                     formMessage.classList.add('d-none');
@@ -89,5 +94,11 @@ function submitForm(event) {
             formMessage.style.backgroundColor = '#f8d7da';
             formMessage.style.color = '#721c24';
             formMessage.textContent = error.message || 'An error occurred. Please try again later.';
+            if (window.pushFailedForm) {
+                window.pushFailedForm({
+                    form: 'contact-form',
+                    failure: error.message
+                })
+            }
         });
 }
