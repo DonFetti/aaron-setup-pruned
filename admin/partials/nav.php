@@ -16,7 +16,7 @@
                         <a class="nav-link" href="#">Deals</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="tasks.php">Tasks</a>
+                        <a class="nav-link" href="tasks.php?status=&priority=">Tasks</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">Interactions</a>
