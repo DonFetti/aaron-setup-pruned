@@ -20,3 +20,4 @@ photo-del.js
 rsync.exclude
 .htaccess
 php.ini
+admin/db.php
