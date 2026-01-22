@@ -1,3 +1,35 @@
+<?php
+require_once __DIR__ . '/db.php';
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Handle POST request for marking task as done
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mark_done'])) {
+    $task_id = isset($_POST['task_id']) ? trim((string) $_POST['task_id']) : '';
+    
+    if ($task_id === '' || !ctype_digit($task_id)) {
+        header('Location: /admin/tasks.php?error=' . urlencode('Invalid task ID.'));
+        exit;
+    }
+    
+    if (!$pdo || isset($db_error)) {
+        header('Location: /admin/tasks.php?error=' . urlencode('Database unavailable.'));
+        exit;
+    }
+    
+    try {
+        $stmt = $pdo->prepare("UPDATE tasks SET status = 'done' WHERE id = :id");
+        $stmt->execute([':id' => (int) $task_id]);
+        header('Location: /admin/tasks.php?marked_done=1');
+        exit;
+    } catch (PDOException $e) {
+        header('Location: /admin/tasks.php?error=' . urlencode('Could not mark task as done.'));
+        exit;
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -108,6 +140,8 @@
         <?php
         $flash_error = isset($_GET['error']) ? trim((string) $_GET['error']) : null;
         $flash_created = isset($_GET['created']) && $_GET['created'] === '1';
+        $flash_deleted = isset($_GET['deleted']) && $_GET['deleted'] === '1';
+        $flash_marked_done = isset($_GET['marked_done']) && $_GET['marked_done'] === '1';
         ?>
         <?php if ($flash_error): ?>
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -118,6 +152,18 @@
         <?php if ($flash_created): ?>
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 Task created successfully.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php endif; ?>
+        <?php if ($flash_deleted): ?>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                Task deleted successfully.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php endif; ?>
+        <?php if ($flash_marked_done): ?>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                Task marked as done.
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         <?php endif; ?>
@@ -289,7 +335,18 @@
                                                 <td><?php echo $related_to; ?></td>
                                                 <td><?php echo $created_date->format('M d, Y'); ?></td>
                                                 <td>
-                                                    <a href="task.php?id=<?php echo $task['id']; ?>" class="btn btn-sm btn-outline-primary">View</a>
+                                                    <div class="btn-group" role="group">
+                                                        <?php if ($task['status'] !== 'done'): ?>
+                                                            <form method="POST" action="/admin/tasks.php" style="display: inline;" onsubmit="return confirm('Mark this task as done?');">
+                                                                <input type="hidden" name="task_id" value="<?php echo htmlspecialchars($task['id'], ENT_QUOTES, 'UTF-8'); ?>">
+                                                                <input type="hidden" name="mark_done" value="1">
+                                                                <button type="submit" class="btn btn-sm btn-outline-success" title="Mark as Done">
+                                                                    ✓
+                                                                </button>
+                                                            </form>
+                                                        <?php endif; ?>
+                                                        <a href="task.php?id=<?php echo $task['id']; ?>" class="btn btn-sm btn-outline-primary">View</a>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>

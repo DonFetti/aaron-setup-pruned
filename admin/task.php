@@ -1,3 +1,194 @@
+<?php
+require_once __DIR__ . '/db.php';
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Handle POST requests for update and delete
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $task_id = isset($_POST['task_id']) ? trim((string) $_POST['task_id']) : '';
+    
+    if ($task_id === '' || !ctype_digit($task_id)) {
+        header('Location: /admin/tasks.php?error=' . urlencode('Invalid task ID.'));
+        exit;
+    }
+    
+    // Handle mark as done
+    if (isset($_POST['mark_done'])) {
+        if (!$pdo || isset($db_error)) {
+            header('Location: /admin/task.php?id=' . urlencode($task_id) . '&error=' . urlencode('Database unavailable.'));
+            exit;
+        }
+        
+        try {
+            $stmt = $pdo->prepare("UPDATE tasks SET status = 'done' WHERE id = :id");
+            $stmt->execute([':id' => (int) $task_id]);
+            header('Location: /admin/task.php?id=' . urlencode($task_id) . '&marked_done=1');
+            exit;
+        } catch (PDOException $e) {
+            header('Location: /admin/task.php?id=' . urlencode($task_id) . '&error=' . urlencode('Could not mark task as done.'));
+            exit;
+        }
+    }
+    
+    // Handle delete
+    if (isset($_POST['delete_task'])) {
+        if (!$pdo || isset($db_error)) {
+            header('Location: /admin/task.php?id=' . urlencode($task_id) . '&error=' . urlencode('Database unavailable.'));
+            exit;
+        }
+        
+        try {
+            $stmt = $pdo->prepare("DELETE FROM tasks WHERE id = :id");
+            $stmt->execute([':id' => (int) $task_id]);
+            header('Location: /admin/tasks.php?deleted=1');
+            exit;
+        } catch (PDOException $e) {
+            header('Location: /admin/task.php?id=' . urlencode($task_id) . '&error=' . urlencode('Could not delete task.'));
+            exit;
+        }
+    }
+    
+    // Handle update
+    if (isset($_POST['update_task'])) {
+        $notes = isset($_POST['notes']) ? trim((string) $_POST['notes']) : null;
+        $status = isset($_POST['status']) ? (string) $_POST['status'] : 'open';
+        $priority = isset($_POST['priority']) ? (string) $_POST['priority'] : 'medium';
+        $deal_id_raw = isset($_POST['deal_id']) ? trim((string) $_POST['deal_id']) : '';
+        $assigned_to_raw = isset($_POST['assigned_to']) ? trim((string) $_POST['assigned_to']) : '';
+        $due_at_raw = isset($_POST['due_at']) ? trim((string) $_POST['due_at']) : '';
+        
+        $allowed_status = ['open', 'done', 'canceled'];
+        if (!in_array($status, $allowed_status, true)) {
+            $status = 'open';
+        }
+        
+        $allowed_priority = ['low', 'medium', 'high'];
+        if (!in_array($priority, $allowed_priority, true)) {
+            $priority = 'medium';
+        }
+        
+        $deal_id = null;
+        if ($deal_id_raw !== '') {
+            $deal_id = ctype_digit($deal_id_raw) ? (int) $deal_id_raw : null;
+            if ($deal_id !== null && $deal_id < 1) {
+                $deal_id = null;
+            }
+        }
+        
+        $assigned_to = null;
+        if ($assigned_to_raw !== '') {
+            $assigned_to = ctype_digit($assigned_to_raw) ? (int) $assigned_to_raw : null;
+            if ($assigned_to !== null && $assigned_to < 1) {
+                $assigned_to = null;
+            }
+        }
+        
+        $due_at = null;
+        if ($due_at_raw !== '') {
+            $dt = DateTime::createFromFormat('Y-m-d', $due_at_raw);
+            if ($dt) {
+                $due_at = $dt->format('Y-m-d H:i:s');
+            }
+        }
+        
+        if (!$pdo || isset($db_error)) {
+            header('Location: /admin/task.php?id=' . urlencode($task_id) . '&error=' . urlencode('Database unavailable.'));
+            exit;
+        }
+        
+        try {
+            $sql = "UPDATE tasks 
+                    SET notes = :notes, 
+                        status = :status, 
+                        priority = :priority, 
+                        due_at = :due_at, 
+                        assigned_to = :assigned_to, 
+                        deal_id = :deal_id
+                    WHERE id = :id";
+            $params = [
+                ':notes'       => $notes ?: null,
+                ':status'      => $status,
+                ':priority'    => $priority,
+                ':due_at'      => $due_at,
+                ':assigned_to' => $assigned_to,
+                ':deal_id'     => $deal_id,
+                ':id'          => (int) $task_id,
+            ];
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($params);
+            header('Location: /admin/task.php?id=' . urlencode($task_id) . '&updated=1');
+            exit;
+        } catch (PDOException $e) {
+            header('Location: /admin/task.php?id=' . urlencode($task_id) . '&error=' . urlencode('Could not update task.'));
+            exit;
+        }
+    }
+}
+
+// Get task ID from URL
+$task_id = isset($_GET['id']) ? trim((string) $_GET['id']) : '';
+$task = null;
+$error = null;
+$deals = [];
+$users = [];
+
+// Validate task ID
+if ($task_id === '' || !ctype_digit($task_id)) {
+    $error = 'Invalid task ID.';
+} elseif (!$pdo || isset($db_error)) {
+    $error = 'Database connection unavailable.';
+} else {
+    // Fetch deals and users for the edit form
+    try {
+        $deals = $pdo->query('SELECT id, "name" FROM deals ORDER BY "name"')->fetchAll();
+    } catch (PDOException $e) { /* keep empty */ }
+    
+    try {
+        $users = $pdo->query('SELECT id, first_name FROM users ORDER BY first_name')->fetchAll();
+    } catch (PDOException $e) { /* keep empty */ }
+    
+    try {
+        // Fetch task with related data
+        $sql = "SELECT 
+            t.id,
+            t.title,
+            t.status,
+            t.priority,
+            t.due_at,
+            t.created_at,
+            t.notes,
+            t.contact_id,
+            t.deal_id,
+            t.assigned_to,
+            c.name as contact_name,
+            d.name as deal_name,
+            u.first_name as assigned_to_name
+        FROM tasks t
+        LEFT JOIN contacts c ON t.contact_id = c.id
+        LEFT JOIN deals d ON t.deal_id = d.id
+        LEFT JOIN users u ON t.assigned_to = u.id
+        WHERE t.id = :id
+        LIMIT 1";
+        
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([':id' => (int) $task_id]);
+        $task = $stmt->fetch();
+        
+        if (!$task) {
+            $error = 'Task not found.';
+        }
+    } catch (PDOException $e) {
+        $error = 'Error loading task: ' . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8');
+    }
+}
+
+// Get flash messages
+$flash_error = isset($_GET['error']) ? trim((string) $_GET['error']) : null;
+$flash_updated = isset($_GET['updated']) && $_GET['updated'] === '1';
+$flash_marked_done = isset($_GET['marked_done']) && $_GET['marked_done'] === '1';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,60 +205,51 @@
 
     <!-- Main Content -->
     <div class="container-fluid mt-4">
-        <?php
-        // Get task ID from URL
-        $task_id = isset($_GET['id']) ? trim((string) $_GET['id']) : '';
-        $task = null;
-        $error = null;
+        <!-- Flash Messages -->
+        <?php if ($flash_error): ?>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <?php echo htmlspecialchars($flash_error, ENT_QUOTES, 'UTF-8'); ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php endif; ?>
+        <?php if ($flash_updated): ?>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                Task updated successfully.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php endif; ?>
+        <?php if ($flash_marked_done): ?>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                Task marked as done.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php endif; ?>
 
-        // Validate task ID
-        if ($task_id === '' || !ctype_digit($task_id)) {
-            $error = 'Invalid task ID.';
-        } elseif (!$pdo || isset($db_error)) {
-            $error = 'Database connection unavailable.';
-        } else {
-            try {
-                // Fetch task with related data
-                $sql = "SELECT 
-                    t.id,
-                    t.title,
-                    t.status,
-                    t.priority,
-                    t.due_at,
-                    t.created_at,
-                    t.notes,
-                    t.contact_id,
-                    t.deal_id,
-                    t.assigned_to,
-                    c.name as contact_name,
-                    d.name as deal_name,
-                    u.first_name as assigned_to_name
-                FROM tasks t
-                LEFT JOIN contacts c ON t.contact_id = c.id
-                LEFT JOIN deals d ON t.deal_id = d.id
-                LEFT JOIN users u ON t.assigned_to = u.id
-                WHERE t.id = :id
-                LIMIT 1";
-                
-                $stmt = $pdo->prepare($sql);
-                $stmt->execute([':id' => (int) $task_id]);
-                $task = $stmt->fetch();
-                
-                if (!$task) {
-                    $error = 'Task not found.';
-                }
-            } catch (PDOException $e) {
-                $error = 'Error loading task: ' . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8');
-            }
-        }
-        ?>
-
-        <!-- Back Button -->
+        <!-- Back Button and Actions -->
         <div class="row mb-3">
-            <div class="col-12">
+            <div class="col-12 d-flex justify-content-between align-items-center">
                 <a href="tasks.php?status=&priority=" class="btn btn-outline-secondary">
                     <i class="bi bi-arrow-left"></i> Back to Tasks
                 </a>
+                <?php if ($task): ?>
+                    <div>
+                        <?php if ($task['status'] !== 'done'): ?>
+                            <form method="POST" action="/admin/task.php" style="display: inline;">
+                                <input type="hidden" name="task_id" value="<?php echo htmlspecialchars($task['id'], ENT_QUOTES, 'UTF-8'); ?>">
+                                <input type="hidden" name="mark_done" value="1">
+                                <button type="submit" class="btn btn-success">
+                                    Mark as Done
+                                </button>
+                            </form>
+                        <?php endif; ?>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editTaskModal">
+                            Edit Task
+                        </button>
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteTaskModal">
+                            Delete Task
+                        </button>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
 
@@ -132,9 +314,6 @@
                         </div>
                         <div class="card-body">
                             <dl class="row mb-0">
-                                <dt class="col-sm-5">Task ID:</dt>
-                                <dd class="col-sm-7"><?php echo htmlspecialchars($task['id'], ENT_QUOTES, 'UTF-8'); ?></dd>
-
                                 <dt class="col-sm-5">Status:</dt>
                                 <dd class="col-sm-7">
                                     <span class="badge <?php echo $status_class; ?>">
@@ -203,6 +382,106 @@
             </div>
         <?php endif; ?>
     </div>
+
+    <!-- Edit Task Modal -->
+    <?php if ($task): ?>
+    <div class="modal fade" id="editTaskModal" tabindex="-1" aria-labelledby="editTaskModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="/admin/task.php" method="POST">
+                    <input type="hidden" name="task_id" value="<?php echo htmlspecialchars($task['id'], ENT_QUOTES, 'UTF-8'); ?>">
+                    <input type="hidden" name="update_task" value="1">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editTaskModalLabel">Edit Task</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="edit_notes" class="form-label">Notes</label>
+                            <textarea class="form-control" id="edit_notes" name="notes" rows="5" placeholder="Task notes"><?php echo htmlspecialchars($task['notes'] ?? '', ENT_QUOTES, 'UTF-8'); ?></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_status" class="form-label">Status</label>
+                                <select class="form-select" id="edit_status" name="status">
+                                    <option value="open" <?php echo $task['status'] === 'open' ? 'selected' : ''; ?>>Open</option>
+                                    <option value="done" <?php echo $task['status'] === 'done' ? 'selected' : ''; ?>>Done</option>
+                                    <option value="canceled" <?php echo $task['status'] === 'canceled' ? 'selected' : ''; ?>>Canceled</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_priority" class="form-label">Priority</label>
+                                <select class="form-select" id="edit_priority" name="priority">
+                                    <option value="low" <?php echo $task['priority'] === 'low' ? 'selected' : ''; ?>>Low</option>
+                                    <option value="medium" <?php echo $task['priority'] === 'medium' ? 'selected' : ''; ?>>Medium</option>
+                                    <option value="high" <?php echo $task['priority'] === 'high' ? 'selected' : ''; ?>>High</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_due_at" class="form-label">Due Date</label>
+                            <input type="date" class="form-control" id="edit_due_at" name="due_at" 
+                                   value="<?php echo $task['due_at'] ? (new DateTime($task['due_at']))->format('Y-m-d') : ''; ?>">
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_deal" class="form-label">Deal</label>
+                            <select class="form-select" id="edit_deal" name="deal_id">
+                                <option value="">— None —</option>
+                                <?php foreach ($deals as $d):
+                                    $dname = $d['name'] ?? $d['Name'] ?? '';
+                                    $selected = ($task['deal_id'] && (int) $task['deal_id'] === (int) $d['id']) ? ' selected' : '';
+                                ?>
+                                    <option value="<?php echo (int) $d['id']; ?>"<?php echo $selected; ?>><?php echo htmlspecialchars($dname, ENT_QUOTES, 'UTF-8'); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_assigned" class="form-label">Assigned To</label>
+                            <select class="form-select" id="edit_assigned" name="assigned_to">
+                                <option value="">Unassigned</option>
+                                <?php foreach ($users as $u):
+                                    $uid = (int) $u['id'];
+                                    $selected = ($task['assigned_to'] && (int) $task['assigned_to'] === $uid) ? ' selected' : '';
+                                ?>
+                                    <option value="<?php echo $uid; ?>"<?php echo $selected; ?>><?php echo htmlspecialchars($u['first_name'], ENT_QUOTES, 'UTF-8'); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Update Task</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Task Modal -->
+    <div class="modal fade" id="deleteTaskModal" tabindex="-1" aria-labelledby="deleteTaskModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="/admin/task.php" method="POST">
+                    <input type="hidden" name="task_id" value="<?php echo htmlspecialchars($task['id'], ENT_QUOTES, 'UTF-8'); ?>">
+                    <input type="hidden" name="delete_task" value="1">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteTaskModalLabel">Delete Task</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to delete this task?</p>
+                        <p class="mb-0"><strong><?php echo htmlspecialchars($task['title'], ENT_QUOTES, 'UTF-8'); ?></strong></p>
+                        <p class="text-danger mt-2"><small>This action cannot be undone.</small></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger">Delete Task</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 </body>
