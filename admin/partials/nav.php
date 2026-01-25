@@ -10,7 +10,7 @@
                         <a class="nav-link active" href="/admin/">Dashboard</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Contacts</a>
+                        <a class="nav-link" href="contacts.php">Contacts</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">Deals</a>
