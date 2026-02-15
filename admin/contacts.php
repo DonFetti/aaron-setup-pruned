@@ -88,19 +88,29 @@
         }
         ?>
 
-        <!-- TODO: flash messages (error, created, updated, deleted) -->
-        <div class="row mb-3" style="display: none;" aria-hidden="true">
-            <div class="col-12">
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <span class="flash-placeholder">Placeholder: success message</span>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <span class="flash-placeholder">Placeholder: error message</span>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
+        <?php
+        $flash_error = isset($_GET['error']) ? trim((string) $_GET['error']) : null;
+        $flash_created = isset($_GET['created']) && $_GET['created'] === '1';
+        $flash_deleted = isset($_GET['deleted']) && $_GET['deleted'] === '1';
+        ?>
+        <?php if ($flash_error): ?>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <?php echo htmlspecialchars($flash_error, ENT_QUOTES, 'UTF-8'); ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-        </div>
+        <?php endif; ?>
+        <?php if ($flash_created): ?>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                Contact created successfully.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php endif; ?>
+        <?php if ($flash_deleted): ?>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                Contact deleted successfully.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php endif; ?>
 
         <div class="row mb-3">
             <div class="col-12 d-flex justify-content-between align-items-center">
@@ -278,7 +288,7 @@
     <div class="modal fade" id="addContactModal" tabindex="-1" aria-labelledby="addContactModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form action="#" method="POST">
+                <form action="/admin/contact-create.php" method="POST">
                     <input type="hidden" name="add_contact" value="1">
                     <div class="modal-header">
                         <h5 class="modal-title" id="addContactModalLabel">Add Contact</h5>
