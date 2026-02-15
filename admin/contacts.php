@@ -1,3 +1,5 @@
+<?php require_once __DIR__ . '/partials/no-cache.php'; ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
