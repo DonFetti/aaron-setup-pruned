@@ -13,7 +13,7 @@
                         <a class="nav-link" href="contacts.php">Contacts</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Deals</a>
+                        <a class="nav-link" href="deals.php">Deals</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="tasks.php?status=&priority=">Tasks</a>
