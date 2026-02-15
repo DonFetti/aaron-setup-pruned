@@ -49,8 +49,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mark_done'])) {
     <div class="container-fluid mt-4">
         <?php
         // Get filter parameters
-        $filter_status = isset($_GET['status']) ? $_GET['status'] : '';
-        $filter_priority = isset($_GET['priority']) ? $_GET['priority'] : '';
+        $filter_status = isset($_GET['status']) ? trim((string) $_GET['status']) : '';
+        $filter_priority = isset($_GET['priority']) ? trim((string) $_GET['priority']) : '';
+        $filter_assigned = isset($_GET['assigned_to']) ? trim((string) $_GET['assigned_to']) : '';
 
         // Initialize stats
         $stats_open = 0;
@@ -118,6 +119,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mark_done'])) {
                 if ($filter_priority) {
                     $sql .= " AND t.priority = :priority";
                     $params[':priority'] = $filter_priority;
+                }
+
+                if ($filter_assigned !== '' && ctype_digit($filter_assigned)) {
+                    $sql .= " AND t.assigned_to = :assigned_to";
+                    $params[':assigned_to'] = (int) $filter_assigned;
                 }
 
                 $sql .= " ORDER BY 
@@ -217,20 +223,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mark_done'])) {
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">All Tasks</h5>
-                        <form method="GET" action="" class="d-flex gap-2">
-                            <select name="status" class="form-select form-select-sm" style="width: auto;" onchange="this.form.submit()">
+                        <form method="GET" action="" class="d-flex flex-wrap gap-2 align-items-center">
+                            <select name="status" class="form-select form-select-sm" style="width: auto;" aria-label="Filter by status" onchange="this.form.submit()">
                                 <option value="">All Statuses</option>
                                 <option value="open" <?php echo $filter_status === 'open' ? 'selected' : ''; ?>>Open</option>
                                 <option value="done" <?php echo $filter_status === 'done' ? 'selected' : ''; ?>>Done</option>
                                 <option value="canceled" <?php echo $filter_status === 'canceled' ? 'selected' : ''; ?>>Canceled</option>
                             </select>
-                            <select name="priority" class="form-select form-select-sm" style="width: auto;" onchange="this.form.submit()">
+                            <select name="priority" class="form-select form-select-sm" style="width: auto;" aria-label="Filter by priority" onchange="this.form.submit()">
                                 <option value="">All Priorities</option>
                                 <option value="low" <?php echo $filter_priority === 'low' ? 'selected' : ''; ?>>Low</option>
                                 <option value="medium" <?php echo $filter_priority === 'medium' ? 'selected' : ''; ?>>Medium</option>
                                 <option value="high" <?php echo $filter_priority === 'high' ? 'selected' : ''; ?>>High</option>
                             </select>
-                            <?php if ($filter_status || $filter_priority): ?>
+                            <select name="assigned_to" class="form-select form-select-sm" style="width: auto;" aria-label="Filter by assigned user" onchange="this.form.submit()">
+                                <option value="">All Users</option>
+                                <?php foreach ($users as $u): ?>
+                                    <option value="<?php echo (int) $u['id']; ?>" <?php echo $filter_assigned !== '' && (int) $u['id'] === (int) $filter_assigned ? 'selected' : ''; ?>><?php echo htmlspecialchars($u['first_name'], ENT_QUOTES, 'UTF-8'); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                            <?php if ($filter_status || $filter_priority || $filter_assigned): ?>
                                 <a href="tasks.php" class="btn btn-sm btn-outline-secondary">Clear</a>
                             <?php endif; ?>
                         </form>
