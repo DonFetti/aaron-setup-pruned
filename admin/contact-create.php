@@ -41,9 +41,7 @@ $err = [];
 if ($name === '') {
     $err[] = 'Name is required.';
 }
-if ($email === '') {
-    $err[] = 'Email is required.';
-} elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+if ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
     $err[] = 'Invalid email format.';
 }
 
@@ -84,7 +82,7 @@ try {
     $params = [
         ':id'          => $contact_id,
         ':name'        => $name,
-        ':email'       => $email,
+        ':email'       => $email !== '' ? $email : null,
         ':phone'       => $phone ?: null,
         ':company'     => $company ?: null,
         ':role'        => $role ?: null,

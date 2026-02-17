@@ -85,9 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_contact']) && 
     if ($name === '') {
         $err[] = 'Name is required.';
     }
-    if ($email === '') {
-        $err[] = 'Email is required.';
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    if ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $err[] = 'Invalid email format.';
     }
     if ($status !== '' && $status !== null) {
@@ -122,7 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_contact']) && 
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
             ':name'        => $name,
-            ':email'       => $email,
+            ':email'       => $email !== '' ? $email : null,
             ':phone'       => $phone ?: null,
             ':company'     => $company ?: null,
             ':role'        => $role ?: null,
@@ -206,9 +204,9 @@ $created_date = $contact['created_at'] ? new DateTime($contact['created_at']) : 
                                        value="<?php echo htmlspecialchars($contact['name'], ENT_QUOTES, 'UTF-8'); ?>">
                             </div>
                             <div class="mb-3">
-                                <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
-                                <input type="email" class="form-control" id="email" name="email" required
-                                       value="<?php echo htmlspecialchars($contact['email'], ENT_QUOTES, 'UTF-8'); ?>">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" name="email"
+                                       value="<?php echo $contact['email'] !== null ? htmlspecialchars($contact['email'], ENT_QUOTES, 'UTF-8') : ''; ?>">
                             </div>
                             <div class="mb-3">
                                 <label for="phone" class="form-label">Phone</label>

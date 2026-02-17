@@ -185,7 +185,7 @@ if ($pdo && !isset($db_error)) {
                                         <?php foreach ($recent_contacts as $c): ?>
                                             <tr>
                                                 <td><a href="contact.php?id=<?php echo htmlspecialchars($c['id'], ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($c['name'], ENT_QUOTES, 'UTF-8'); ?></a></td>
-                                                <td><?php echo htmlspecialchars($c['email'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                                <td><?php echo $c['email'] ? htmlspecialchars($c['email'], ENT_QUOTES, 'UTF-8') : '—'; ?></td>
                                                 <td><?php echo $c['company'] ? htmlspecialchars($c['company'], ENT_QUOTES, 'UTF-8') : '—'; ?></td>
                                                 <td><?php echo $c['status'] ? ucfirst($c['status']) : '—'; ?></td>
                                                 <td><a href="contact.php?id=<?php echo htmlspecialchars($c['id'], ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-sm btn-outline-primary">View</a></td>
@@ -217,8 +217,8 @@ if ($pdo && !isset($db_error)) {
                             <input type="text" class="form-control" id="add_name" name="name" required placeholder="Full name">
                         </div>
                         <div class="mb-3">
-                            <label for="add_email" class="form-label">Email <span class="text-danger">*</span></label>
-                            <input type="email" class="form-control" id="add_email" name="email" required placeholder="email@example.com">
+                            <label for="add_email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="add_email" name="email" placeholder="email@example.com">
                         </div>
                         <div class="mb-3">
                             <label for="add_phone" class="form-label">Phone</label>

@@ -250,7 +250,7 @@
                                         ?>
                                             <tr>
                                                 <td><?php echo htmlspecialchars($contact['name'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                                <td><?php echo htmlspecialchars($contact['email'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                                <td><?php echo $contact['email'] ? htmlspecialchars($contact['email'], ENT_QUOTES, 'UTF-8') : '<span class="text-muted">—</span>'; ?></td>
                                                 <td><?php echo $contact['company'] ? htmlspecialchars($contact['company'], ENT_QUOTES, 'UTF-8') : '<span class="text-muted">—</span>'; ?></td>
                                                 <td><?php echo $contact['role'] ? htmlspecialchars($contact['role'], ENT_QUOTES, 'UTF-8') : '<span class="text-muted">—</span>'; ?></td>
                                                 <td><?php echo $contact['phone'] ? htmlspecialchars($contact['phone'], ENT_QUOTES, 'UTF-8') : '<span class="text-muted">—</span>'; ?></td>
@@ -302,8 +302,8 @@
                             <input type="text" class="form-control" id="add_name" name="name" required placeholder="Full name">
                         </div>
                         <div class="mb-3">
-                            <label for="add_email" class="form-label">Email <span class="text-danger">*</span></label>
-                            <input type="email" class="form-control" id="add_email" name="email" required placeholder="email@example.com">
+                            <label for="add_email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="add_email" name="email" placeholder="email@example.com">
                         </div>
                         <div class="mb-3">
                             <label for="add_phone" class="form-label">Phone</label>
