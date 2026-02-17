@@ -2,6 +2,7 @@
 $nav_script = basename($_SERVER['PHP_SELF'] ?? '');
 $nav_dashboard = ($nav_script === 'index.php' || $nav_script === '');
 $nav_contacts = in_array($nav_script, ['contacts.php', 'contact.php', 'contact-create.php'], true);
+$nav_companies = in_array($nav_script, ['companies.php', 'company.php'], true);
 $nav_deals = in_array($nav_script, ['deals.php', 'deal.php', 'deal-create.php'], true);
 $nav_tasks = in_array($nav_script, ['tasks.php', 'task.php', 'task-create.php'], true);
 $nav_interactions = in_array($nav_script, ['interactions.php', 'interaction.php', 'interaction-create.php'], true);
@@ -19,6 +20,9 @@ $nav_interactions = in_array($nav_script, ['interactions.php', 'interaction.php'
                 </li>
                 <li class="nav-item">
                     <a class="nav-link<?php echo $nav_contacts ? ' active' : ''; ?>" href="contacts.php">Contacts</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link<?php echo $nav_companies ? ' active' : ''; ?>" href="companies.php">Companies</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link<?php echo $nav_deals ? ' active' : ''; ?>" href="deals.php">Deals</a>
