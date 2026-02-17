@@ -32,10 +32,12 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['add_contact'])) {
 $name = isset($_POST['name']) ? trim((string) $_POST['name']) : '';
 $email = isset($_POST['email']) ? trim((string) $_POST['email']) : '';
 $phone = isset($_POST['phone']) ? trim((string) $_POST['phone']) : null;
-$company = isset($_POST['company']) ? trim((string) $_POST['company']) : null;
 $role = isset($_POST['role']) ? trim((string) $_POST['role']) : null;
 $status = isset($_POST['status']) ? trim((string) $_POST['status']) : null;
 $source = isset($_POST['source']) ? trim((string) $_POST['source']) : null;
+$company_id = isset($_POST['company_id']) && $_POST['company_id'] !== '' ? (int) $_POST['company_id'] : null;
+$new_company_name = isset($_POST['new_company_name']) ? trim((string) $_POST['new_company_name']) : '';
+$new_company_type = isset($_POST['new_company_type']) ? trim((string) $_POST['new_company_type']) : '';
 
 $err = [];
 if ($name === '') {
@@ -55,6 +57,35 @@ if ($status !== '' && $status !== null) {
     $status = null;
 }
 
+// Resolve company: either existing company_id or create new company
+$company_display_name = null;
+if ($new_company_name !== '') {
+    if ($new_company_type === '') {
+        $err[] = 'Company type is required when creating a new company.';
+    } else {
+        $company_id = null; // will set after insert
+        $company_display_name = $new_company_name;
+    }
+} elseif ($company_id !== null) {
+    // Validate existing company_id exists
+    if (!$pdo || isset($db_error)) {
+        // checked later
+    } else {
+        try {
+            $st = $pdo->prepare("SELECT id, name FROM companies WHERE id = :id LIMIT 1");
+            $st->execute([':id' => $company_id]);
+            $row = $st->fetch();
+            if ($row) {
+                $company_display_name = $row['name'];
+            } else {
+                $company_id = null;
+            }
+        } catch (PDOException $e) {
+            $company_id = null;
+        }
+    }
+}
+
 if (!empty($err)) {
     header('Location: /admin/contacts.php?error=' . urlencode(implode(' ', $err)));
     exit;
@@ -66,39 +97,52 @@ if (!$pdo || isset($db_error)) {
 }
 
 try {
+    // Create new company if user chose "Create new company"
+    if ($new_company_name !== '' && $new_company_type !== '') {
+        $st = $pdo->prepare("INSERT INTO companies (name, company_type) VALUES (:name, :company_type) RETURNING id, name");
+        $st->execute([
+            ':name'         => $new_company_name,
+            ':company_type' => $new_company_type,
+        ]);
+        $row = $st->fetch();
+        $company_id = (int) $row['id'];
+        $company_display_name = $row['name'];
+    }
+
     // Generate UUID v4 in pure PHP (no extensions required)
-    // Format: xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
-    // where x is any hexadecimal digit and y is one of 8, 9, A, or B
     $contact_id = sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
         mt_rand(0, 0xffff), mt_rand(0, 0xffff),
         mt_rand(0, 0xffff),
-        mt_rand(0, 0x0fff) | 0x4000, // Version 4
-        mt_rand(0, 0x3fff) | 0x8000, // Variant bits
+        mt_rand(0, 0x0fff) | 0x4000,
+        mt_rand(0, 0x3fff) | 0x8000,
         mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
     );
 
-    $sql = "INSERT INTO contacts (id, name, email, phone, company, role, status, source, modified_by)
-            VALUES (:id, :name, :email, :phone, :company, :role, :status, :source, :modified_by)";
+    $sql = "INSERT INTO contacts (id, name, email, phone, company, company_id, role, status, source, modified_by)
+            VALUES (:id, :name, :email, :phone, :company, :company_id, :role, :status, :source, :modified_by)";
     $params = [
         ':id'          => $contact_id,
         ':name'        => $name,
         ':email'       => $email !== '' ? $email : null,
         ':phone'       => $phone ?: null,
-        ':company'     => $company ?: null,
+        ':company'     => $company_display_name,
+        ':company_id'  => $company_id,
         ':role'        => $role ?: null,
         ':status'      => $status,
         ':source'      => $source ?: null,
         ':modified_by' => $user_id,
     ];
-    
+
     $st = $pdo->prepare($sql);
     $st->execute($params);
     header('Location: /admin/contacts.php?created=1');
     exit;
 } catch (PDOException $e) {
-    // Check if it's a unique constraint violation (duplicate email)
-    if (strpos($e->getMessage(), 'contacts_email_key') !== false || strpos($e->getMessage(), 'unique') !== false) {
+    $msg = $e->getMessage();
+    if (strpos($msg, 'contacts_email_key') !== false || (strpos($msg, 'unique') !== false && strpos($msg, 'contacts') !== false)) {
         header('Location: /admin/contacts.php?error=' . urlencode('A contact with this email already exists.'));
+    } elseif (strpos($msg, 'companies_name_key') !== false || (strpos($msg, 'unique') !== false && strpos($msg, 'companies') !== false)) {
+        header('Location: /admin/contacts.php?error=' . urlencode('A company with this name already exists. Please select it from the dropdown.'));
     } else {
         header('Location: /admin/contacts.php?error=' . urlencode('Could not create contact.'));
     }

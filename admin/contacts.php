@@ -25,8 +25,13 @@
         $stats_with_open_deals = 0;
         $contacts = [];
 
+        $companies = [];
         if ($pdo && !isset($db_error)) {
             try {
+                // Load companies for dropdown (contact create)
+                $stmt = $pdo->query("SELECT id, name FROM companies ORDER BY name ASC");
+                $companies = $stmt->fetchAll();
+
                 // Get total contacts count
                 $stmt = $pdo->query("SELECT COUNT(*) as count FROM contacts");
                 $stats_total = $stmt->fetch()['count'];
@@ -46,18 +51,21 @@
                                      WHERE d.won_at IS NULL AND d.lost_at IS NULL");
                 $stats_with_open_deals = $stmt->fetch()['count'];
 
-                // Build query for contacts
+                // Build query for contacts (show company name from companies when linked)
                 $sql = "SELECT 
-                    id,
-                    name,
-                    email,
-                    company,
-                    role,
-                    phone,
-                    status,
-                    source,
-                    created_at
-                FROM contacts
+                    c.id,
+                    c.name,
+                    c.email,
+                    c.company,
+                    c.company_id,
+                    co.name AS company_name,
+                    c.role,
+                    c.phone,
+                    c.status,
+                    c.source,
+                    c.created_at
+                FROM contacts c
+                LEFT JOIN companies co ON co.id = c.company_id
                 WHERE 1=1";
 
                 $params = [];
@@ -71,15 +79,16 @@
                 // Add search filter
                 if ($search_query !== '') {
                     $sql .= " AND (
-                        name ILIKE :search 
-                        OR email ILIKE :search 
-                        OR company ILIKE :search 
-                        OR phone ILIKE :search
+                        c.name ILIKE :search 
+                        OR c.email ILIKE :search 
+                        OR c.company ILIKE :search 
+                        OR co.name ILIKE :search
+                        OR c.phone ILIKE :search
                     )";
                     $params[':search'] = '%' . $search_query . '%';
                 }
 
-                $sql .= " ORDER BY name ASC";
+                $sql .= " ORDER BY c.name ASC";
 
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute($params);
@@ -251,7 +260,7 @@
                                             <tr>
                                                 <td><?php echo htmlspecialchars($contact['name'], ENT_QUOTES, 'UTF-8'); ?></td>
                                                 <td><?php echo $contact['email'] ? htmlspecialchars($contact['email'], ENT_QUOTES, 'UTF-8') : '<span class="text-muted">—</span>'; ?></td>
-                                                <td><?php echo $contact['company'] ? htmlspecialchars($contact['company'], ENT_QUOTES, 'UTF-8') : '<span class="text-muted">—</span>'; ?></td>
+                                                <td><?php echo !empty($contact['company_name']) ? htmlspecialchars($contact['company_name'], ENT_QUOTES, 'UTF-8') : ($contact['company'] ? htmlspecialchars($contact['company'], ENT_QUOTES, 'UTF-8') : '<span class="text-muted">—</span>'); ?></td>
                                                 <td><?php echo $contact['role'] ? htmlspecialchars($contact['role'], ENT_QUOTES, 'UTF-8') : '<span class="text-muted">—</span>'; ?></td>
                                                 <td><?php echo $contact['phone'] ? htmlspecialchars($contact['phone'], ENT_QUOTES, 'UTF-8') : '<span class="text-muted">—</span>'; ?></td>
                                                 <td>
@@ -310,8 +319,33 @@
                             <input type="text" class="form-control" id="add_phone" name="phone" placeholder="+1 555 0000">
                         </div>
                         <div class="mb-3">
-                            <label for="add_company" class="form-label">Company</label>
-                            <input type="text" class="form-control" id="add_company" name="company" placeholder="Company name">
+                            <label class="form-label">Company</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="company_choice" id="company_existing" value="existing" checked>
+                                <label class="form-check-label" for="company_existing">Select existing</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="company_choice" id="company_new" value="new">
+                                <label class="form-check-label" for="company_new">Create new company</label>
+                            </div>
+                            <div id="company_existing_wrap" class="mt-2">
+                                <select class="form-select" name="company_id" id="add_company_id" aria-label="Select company">
+                                    <option value="">— None —</option>
+                                    <?php foreach ($companies as $co): ?>
+                                        <option value="<?php echo (int) $co['id']; ?>"><?php echo htmlspecialchars($co['name'], ENT_QUOTES, 'UTF-8'); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div id="company_new_wrap" class="mt-2 d-none">
+                                <input type="text" class="form-control mb-2" name="new_company_name" id="add_new_company_name" placeholder="Company name">
+                                <select class="form-select" name="new_company_type" id="add_new_company_type" aria-label="Company type">
+                                    <option value="">— Select type —</option>
+                                    <option value="Customer">Customer</option>
+                                    <option value="Partner">Partner</option>
+                                    <option value="Vendor">Vendor</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
                         </div>
                         <div class="mb-3">
                             <label for="add_role" class="form-label">Role</label>
@@ -340,5 +374,29 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script>
+    (function() {
+        var existing = document.getElementById('company_existing');
+        var newRadio = document.getElementById('company_new');
+        var existingWrap = document.getElementById('company_existing_wrap');
+        var newWrap = document.getElementById('company_new_wrap');
+        var companyIdSelect = document.getElementById('add_company_id');
+        var newName = document.getElementById('add_new_company_name');
+        var newType = document.getElementById('add_new_company_type');
+        function toggle() {
+            var showExisting = existing.checked;
+            existingWrap.classList.toggle('d-none', !showExisting);
+            newWrap.classList.toggle('d-none', showExisting);
+            companyIdSelect.disabled = !showExisting;
+            newName.disabled = showExisting;
+            newType.disabled = showExisting;
+            if (showExisting) { newName.removeAttribute('required'); newType.removeAttribute('required'); }
+            else { newName.setAttribute('required', 'required'); newType.setAttribute('required', 'required'); }
+        }
+        existing.addEventListener('change', toggle);
+        newRadio.addEventListener('change', toggle);
+        toggle();
+    })();
+    </script>
 </body>
 </html>
