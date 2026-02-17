@@ -46,10 +46,13 @@
                     d.created_at,
                     d.won_at,
                     d.lost_at,
+                    d.company_id,
                     c.name AS contact_name,
-                    c.id AS contact_id
+                    c.id AS contact_id,
+                    co.name AS company_name
                 FROM deals d
                 INNER JOIN contacts c ON d.contact_id = c.id
+                LEFT JOIN companies co ON d.company_id = co.id
                 WHERE 1=1";
                 $params = [];
 
@@ -195,6 +198,7 @@
                                     <tr>
                                         <th>Deal</th>
                                         <th>Contact</th>
+                                        <th>Company</th>
                                         <th>Amount</th>
                                         <th>Stage</th>
                                         <th>Close Date</th>
@@ -206,7 +210,7 @@
                                 <tbody>
                                     <?php if (empty($deals)): ?>
                                         <tr>
-                                            <td colspan="8" class="text-center text-muted">
+                                            <td colspan="9" class="text-center text-muted">
                                                 <?php if ($search_query || $filter_status): ?>
                                                     No deals found matching your criteria.
                                                 <?php else: ?>
@@ -236,6 +240,13 @@
                                                 <td><?php echo htmlspecialchars($deal['name'], ENT_QUOTES, 'UTF-8'); ?></td>
                                                 <td>
                                                     <a href="contact.php?id=<?php echo htmlspecialchars($deal['contact_id'], ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($deal['contact_name'], ENT_QUOTES, 'UTF-8'); ?></a>
+                                                </td>
+                                                <td>
+                                                    <?php if (!empty($deal['company_name'])): ?>
+                                                        <a href="company.php?id=<?php echo (int) $deal['company_id']; ?>"><?php echo htmlspecialchars($deal['company_name'], ENT_QUOTES, 'UTF-8'); ?></a>
+                                                    <?php else: ?>
+                                                        <span class="text-muted">—</span>
+                                                    <?php endif; ?>
                                                 </td>
                                                 <td><?php echo $amount !== null ? '$' . $amount : '<span class="text-muted">—</span>'; ?></td>
                                                 <td><?php echo $deal['stage'] ? htmlspecialchars($deal['stage'], ENT_QUOTES, 'UTF-8') : '<span class="text-muted">—</span>'; ?></td>

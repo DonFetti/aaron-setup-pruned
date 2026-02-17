@@ -57,8 +57,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $status = isset($_POST['status']) ? (string) $_POST['status'] : 'open';
         $priority = isset($_POST['priority']) ? (string) $_POST['priority'] : 'medium';
         $deal_id_raw = isset($_POST['deal_id']) ? trim((string) $_POST['deal_id']) : '';
+        $company_id_raw = isset($_POST['company_id']) ? trim((string) $_POST['company_id']) : '';
         $assigned_to_raw = isset($_POST['assigned_to']) ? trim((string) $_POST['assigned_to']) : '';
         $due_at_raw = isset($_POST['due_at']) ? trim((string) $_POST['due_at']) : '';
+        $company_id = (isset($company_id_raw) && $company_id_raw !== '' && ctype_digit($company_id_raw)) ? (int) $company_id_raw : null;
         
         $allowed_status = ['open', 'done', 'canceled'];
         if (!in_array($status, $allowed_status, true)) {
@@ -106,7 +108,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         priority = :priority, 
                         due_at = :due_at, 
                         assigned_to = :assigned_to, 
-                        deal_id = :deal_id
+                        deal_id = :deal_id,
+                        company_id = :company_id
                     WHERE id = :id";
             $params = [
                 ':notes'       => $notes ?: null,
@@ -115,6 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ':due_at'      => $due_at,
                 ':assigned_to' => $assigned_to,
                 ':deal_id'     => $deal_id,
+                ':company_id'  => $company_id,
                 ':id'          => (int) $task_id,
             ];
             $stmt = $pdo->prepare($sql);
@@ -133,6 +137,7 @@ $task_id = isset($_GET['id']) ? trim((string) $_GET['id']) : '';
 $task = null;
 $error = null;
 $deals = [];
+$companies = [];
 $users = [];
 
 // Validate task ID
@@ -141,11 +146,13 @@ if ($task_id === '' || !ctype_digit($task_id)) {
 } elseif (!$pdo || isset($db_error)) {
     $error = 'Database connection unavailable.';
 } else {
-    // Fetch deals and users for the edit form
+    // Fetch deals, companies, and users for the edit form
     try {
         $deals = $pdo->query('SELECT id, "name" FROM deals ORDER BY "name"')->fetchAll();
     } catch (PDOException $e) { /* keep empty */ }
-    
+    try {
+        $companies = $pdo->query('SELECT id, name FROM companies ORDER BY name')->fetchAll();
+    } catch (PDOException $e) { /* keep empty */ }
     try {
         $users = $pdo->query('SELECT id, first_name FROM users ORDER BY first_name')->fetchAll();
     } catch (PDOException $e) { /* keep empty */ }
@@ -162,13 +169,16 @@ if ($task_id === '' || !ctype_digit($task_id)) {
             t.notes,
             t.contact_id,
             t.deal_id,
+            t.company_id,
             t.assigned_to,
             c.name as contact_name,
             d.name as deal_name,
+            co.name as company_name,
             u.first_name as assigned_to_name
         FROM tasks t
         LEFT JOIN contacts c ON t.contact_id = c.id
         LEFT JOIN deals d ON t.deal_id = d.id
+        LEFT JOIN companies co ON t.company_id = co.id
         LEFT JOIN users u ON t.assigned_to = u.id
         WHERE t.id = :id
         LIMIT 1";
@@ -369,6 +379,15 @@ $flash_marked_done = isset($_GET['marked_done']) && $_GET['marked_done'] === '1'
                                     <?php endif; ?>
                                 </dd>
 
+                                <dt class="col-sm-5">Company:</dt>
+                                <dd class="col-sm-7">
+                                    <?php if (!empty($task['company_name'])): ?>
+                                        <a href="company.php?id=<?php echo (int) $task['company_id']; ?>"><?php echo htmlspecialchars($task['company_name'], ENT_QUOTES, 'UTF-8'); ?></a>
+                                    <?php else: ?>
+                                        <span class="text-muted">—</span>
+                                    <?php endif; ?>
+                                </dd>
+
                                 <dt class="col-sm-5">Created:</dt>
                                 <dd class="col-sm-7">
                                     <?php 
@@ -433,6 +452,15 @@ $flash_marked_done = isset($_GET['marked_done']) && $_GET['marked_done'] === '1'
                                     $selected = ($task['deal_id'] && (int) $task['deal_id'] === (int) $d['id']) ? ' selected' : '';
                                 ?>
                                     <option value="<?php echo (int) $d['id']; ?>"<?php echo $selected; ?>><?php echo htmlspecialchars($dname, ENT_QUOTES, 'UTF-8'); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_company" class="form-label">Company</label>
+                            <select class="form-select" id="edit_company" name="company_id">
+                                <option value="">— None —</option>
+                                <?php foreach ($companies as $co): ?>
+                                    <option value="<?php echo (int) $co['id']; ?>" <?php echo $task['company_id'] && (int) $co['id'] === (int) $task['company_id'] ? 'selected' : ''; ?>><?php echo htmlspecialchars($co['name'], ENT_QUOTES, 'UTF-8'); ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>

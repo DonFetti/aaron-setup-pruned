@@ -62,6 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mark_done'])) {
 
         $contacts = [];
         $deals = [];
+        $companies = [];
         $users = [];
 
         if ($pdo && !isset($db_error)) {
@@ -70,6 +71,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mark_done'])) {
             } catch (PDOException $e) { /* keep empty */ }
             try {
                 $deals = $pdo->query('SELECT id, "name" FROM deals ORDER BY "name"')->fetchAll();
+            } catch (PDOException $e) { /* keep empty */ }
+            try {
+                $companies = $pdo->query('SELECT id, name FROM companies ORDER BY name')->fetchAll();
             } catch (PDOException $e) { /* keep empty */ }
             try {
                 $users = $pdo->query('SELECT id, first_name FROM users ORDER BY first_name')->fetchAll();
@@ -100,12 +104,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mark_done'])) {
                     t.due_at,
                     t.created_at,
                     t.notes,
+                    t.company_id,
                     c.name as contact_name,
                     d.name as deal_name,
+                    co.name as company_name,
                     u.first_name as assigned_to_name
                 FROM tasks t
                 LEFT JOIN contacts c ON t.contact_id = c.id
                 LEFT JOIN deals d ON t.deal_id = d.id
+                LEFT JOIN companies co ON t.company_id = co.id
                 LEFT JOIN users u ON t.assigned_to = u.id
                 WHERE 1=1";
 
@@ -263,6 +270,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mark_done'])) {
                                             <th>Priority</th>
                                             <th>Due Date</th>
                                             <th>Assigned To</th>
+                                            <th>Company</th>
                                             <th>Related To</th>
                                             <th>Created</th>
                                             <th>Actions</th>
@@ -270,7 +278,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mark_done'])) {
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td colspan="8" class="text-center text-muted">No tasks found</td>
+                                            <td colspan="9" class="text-center text-muted">No tasks found</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -285,6 +293,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mark_done'])) {
                                             <th>Priority</th>
                                             <th>Due Date</th>
                                             <th>Assigned To</th>
+                                            <th>Company</th>
                                             <th>Related To</th>
                                             <th>Created</th>
                                             <th>Actions</th>
@@ -344,6 +353,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mark_done'])) {
                                                 </td>
                                                 <td>
                                                     <?php echo $task['assigned_to_name'] ? htmlspecialchars($task['assigned_to_name'], ENT_QUOTES, 'UTF-8') : '<span class="text-muted">Unassigned</span>'; ?>
+                                                </td>
+                                                <td>
+                                                    <?php if (!empty($task['company_name'])): ?>
+                                                        <a href="company.php?id=<?php echo (int) $task['company_id']; ?>"><?php echo htmlspecialchars($task['company_name'], ENT_QUOTES, 'UTF-8'); ?></a>
+                                                    <?php else: ?>
+                                                        <span class="text-muted">—</span>
+                                                    <?php endif; ?>
                                                 </td>
                                                 <td><?php echo $related_to; ?></td>
                                                 <td><?php echo $created_date->format('M d, Y'); ?></td>
@@ -433,6 +449,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mark_done'])) {
                                     $dname = $d['name'] ?? $d['Name'] ?? '';
                                 ?>
                                     <option value="<?php echo (int) $d['id']; ?>"><?php echo htmlspecialchars($dname, ENT_QUOTES, 'UTF-8'); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="create_company" class="form-label">Company</label>
+                            <select class="form-select" id="create_company" name="company_id">
+                                <option value="">— None —</option>
+                                <?php foreach ($companies as $co): ?>
+                                    <option value="<?php echo (int) $co['id']; ?>"><?php echo htmlspecialchars($co['name'], ENT_QUOTES, 'UTF-8'); ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>

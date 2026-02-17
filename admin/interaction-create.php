@@ -26,12 +26,16 @@ if ($username && $pdo && !isset($db_error)) {
 
 $contacts = [];
 $deals = [];
+$companies = [];
 if ($pdo && !isset($db_error)) {
     try {
         $contacts = $pdo->query('SELECT id, name FROM contacts ORDER BY name')->fetchAll();
     } catch (PDOException $e) { /* keep empty */ }
     try {
         $deals = $pdo->query('SELECT id, name FROM deals ORDER BY name')->fetchAll();
+    } catch (PDOException $e) { /* keep empty */ }
+    try {
+        $companies = $pdo->query('SELECT id, name FROM companies ORDER BY name')->fetchAll();
     } catch (PDOException $e) { /* keep empty */ }
 }
 
@@ -42,7 +46,9 @@ $allowed_directions = ['inbound', 'outbound'];
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_interaction'])) {
     $contact_id = isset($_POST['contact_id']) ? trim((string) $_POST['contact_id']) : '';
     $deal_id_raw = isset($_POST['deal_id']) ? trim((string) $_POST['deal_id']) : '';
+    $company_id_raw = isset($_POST['company_id']) ? trim((string) $_POST['company_id']) : '';
     $type = isset($_POST['type']) ? trim((string) $_POST['type']) : '';
+    $company_id = (isset($company_id_raw) && $company_id_raw !== '' && ctype_digit($company_id_raw)) ? (int) $company_id_raw : null;
     $direction = isset($_POST['direction']) ? trim((string) $_POST['direction']) : null;
     $subject = isset($_POST['subject']) ? trim((string) $_POST['subject']) : null;
     $body = isset($_POST['body']) ? trim((string) $_POST['body']) : null;
@@ -122,11 +128,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_interaction'])
 
     try {
         if ($occurred_at !== null) {
-            $sql = "INSERT INTO interactions (contact_id, deal_id, type, direction, subject, body, occurred_at, created_by)
-                    VALUES (:contact_id, :deal_id, :type, :direction, :subject, :body, CAST(:occurred_at AS timestamp without time zone), :created_by)";
+            $sql = "INSERT INTO interactions (contact_id, deal_id, company_id, type, direction, subject, body, occurred_at, created_by)
+                    VALUES (:contact_id, :deal_id, :company_id, :type, :direction, :subject, :body, CAST(:occurred_at AS timestamp without time zone), :created_by)";
             $params = [
                 ':contact_id'  => $contact_id,
                 ':deal_id'     => $deal_id,
+                ':company_id'  => $company_id,
                 ':type'        => $type,
                 ':direction'   => $direction,
                 ':subject'     => $subject ?: null,
@@ -135,11 +142,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_interaction'])
                 ':created_by'  => $user_id,
             ];
         } else {
-            $sql = "INSERT INTO interactions (contact_id, deal_id, type, direction, subject, body, created_by)
-                    VALUES (:contact_id, :deal_id, :type, :direction, :subject, :body, :created_by)";
+            $sql = "INSERT INTO interactions (contact_id, deal_id, company_id, type, direction, subject, body, created_by)
+                    VALUES (:contact_id, :deal_id, :company_id, :type, :direction, :subject, :body, :created_by)";
             $params = [
                 ':contact_id' => $contact_id,
                 ':deal_id'    => $deal_id,
+                ':company_id' => $company_id,
                 ':type'       => $type,
                 ':direction'  => $direction,
                 ':subject'    => $subject ?: null,
@@ -219,6 +227,15 @@ $default_time = date('H:i');
                                     <option value="">— None —</option>
                                     <?php foreach ($deals as $d): ?>
                                         <option value="<?php echo (int) $d['id']; ?>"><?php echo htmlspecialchars($d['name'], ENT_QUOTES, 'UTF-8'); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="company_id" class="form-label">Company</label>
+                                <select class="form-select" id="company_id" name="company_id">
+                                    <option value="">— None —</option>
+                                    <?php foreach ($companies as $co): ?>
+                                        <option value="<?php echo (int) $co['id']; ?>"><?php echo htmlspecialchars($co['name'], ENT_QUOTES, 'UTF-8'); ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>

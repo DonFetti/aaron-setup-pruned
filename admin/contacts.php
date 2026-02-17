@@ -17,6 +17,8 @@
         // Get filter parameters
         $filter_status = isset($_GET['status']) ? trim((string) $_GET['status']) : '';
         $search_query = isset($_GET['search']) ? trim((string) $_GET['search']) : '';
+        $filter_company_id = isset($_GET['company']) && $_GET['company'] !== '' ? (int) $_GET['company'] : null;
+        $filter_company_type = isset($_GET['company_type']) ? trim((string) $_GET['company_type']) : '';
 
         // Initialize stats
         $stats_total = 0;
@@ -26,11 +28,16 @@
         $contacts = [];
 
         $companies = [];
+        $company_types = [];
         if ($pdo && !isset($db_error)) {
             try {
-                // Load companies for dropdown (contact create)
+                // Load companies for dropdown (contact create + filter)
                 $stmt = $pdo->query("SELECT id, name FROM companies ORDER BY name ASC");
                 $companies = $stmt->fetchAll();
+
+                // Load distinct company types for industry/type filter dropdown
+                $stmt = $pdo->query("SELECT DISTINCT company_type FROM companies WHERE company_type IS NOT NULL AND company_type != '' ORDER BY company_type ASC");
+                $company_types = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
                 // Get total contacts count
                 $stmt = $pdo->query("SELECT COUNT(*) as count FROM contacts");
@@ -72,8 +79,20 @@
 
                 // Add status filter
                 if ($filter_status && in_array($filter_status, ['active', 'inactive'], true)) {
-                    $sql .= " AND status = :status";
+                    $sql .= " AND c.status = :status";
                     $params[':status'] = $filter_status;
+                }
+
+                // Add company filter (by company id)
+                if ($filter_company_id > 0) {
+                    $sql .= " AND c.company_id = :company_id";
+                    $params[':company_id'] = $filter_company_id;
+                }
+
+                // Add industry/company type filter
+                if ($filter_company_type !== '') {
+                    $sql .= " AND co.company_type = :company_type";
+                    $params[':company_type'] = $filter_company_type;
                 }
 
                 // Add search filter
@@ -172,18 +191,30 @@
         <div class="row">
             <div class="col-12 mb-4">
                 <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
+                    <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
                         <h5 class="mb-0">All Contacts</h5>
-                        <form method="GET" action="" class="d-flex gap-2">
+                        <form method="GET" action="" class="d-flex flex-wrap gap-2 align-items-center">
                             <?php if ($search_query): ?>
                                 <input type="hidden" name="search" value="<?php echo htmlspecialchars($search_query, ENT_QUOTES, 'UTF-8'); ?>">
                             <?php endif; ?>
+                            <select name="company" class="form-select form-select-sm" style="width: auto;" aria-label="Filter by company" onchange="this.form.submit()">
+                                <option value="">All Companies</option>
+                                <?php foreach ($companies as $co): ?>
+                                    <option value="<?php echo (int) $co['id']; ?>" <?php echo $filter_company_id === (int) $co['id'] ? 'selected' : ''; ?>><?php echo htmlspecialchars($co['name'], ENT_QUOTES, 'UTF-8'); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                            <select name="company_type" class="form-select form-select-sm" style="width: auto;" aria-label="Filter by industry type" onchange="this.form.submit()">
+                                <option value="">All Types</option>
+                                <?php foreach ($company_types as $ct): ?>
+                                    <option value="<?php echo htmlspecialchars($ct, ENT_QUOTES, 'UTF-8'); ?>" <?php echo $filter_company_type === $ct ? 'selected' : ''; ?>><?php echo htmlspecialchars($ct, ENT_QUOTES, 'UTF-8'); ?></option>
+                                <?php endforeach; ?>
+                            </select>
                             <select name="status" class="form-select form-select-sm" style="width: auto;" aria-label="Filter by status" onchange="this.form.submit()">
                                 <option value="">All Statuses</option>
                                 <option value="active" <?php echo $filter_status === 'active' ? 'selected' : ''; ?>>Active</option>
                                 <option value="inactive" <?php echo $filter_status === 'inactive' ? 'selected' : ''; ?>>Inactive</option>
                             </select>
-                            <?php if ($filter_status || $search_query): ?>
+                            <?php if ($filter_status || $search_query || $filter_company_id || $filter_company_type !== ''): ?>
                                 <a href="contacts.php" class="btn btn-sm btn-outline-secondary">Clear</a>
                             <?php endif; ?>
                         </form>
@@ -201,6 +232,12 @@
                                 <?php if ($filter_status): ?>
                                     <input type="hidden" name="status" value="<?php echo htmlspecialchars($filter_status, ENT_QUOTES, 'UTF-8'); ?>">
                                 <?php endif; ?>
+                                <?php if ($filter_company_id): ?>
+                                    <input type="hidden" name="company" value="<?php echo (int) $filter_company_id; ?>">
+                                <?php endif; ?>
+                                <?php if ($filter_company_type !== ''): ?>
+                                    <input type="hidden" name="company_type" value="<?php echo htmlspecialchars($filter_company_type, ENT_QUOTES, 'UTF-8'); ?>">
+                                <?php endif; ?>
                                 <div class="flex-grow-1">
                                     <input type="text" 
                                            class="form-control" 
@@ -213,7 +250,15 @@
                                     Search
                                 </button>
                                 <?php if ($search_query): ?>
-                                    <a href="contacts.php<?php echo $filter_status ? '?status=' . urlencode($filter_status) : ''; ?>" class="btn btn-outline-secondary">
+                                    <?php
+                                    $clear_params = array_filter([
+                                        $filter_status ? 'status=' . urlencode($filter_status) : '',
+                                        $filter_company_id ? 'company=' . (int) $filter_company_id : '',
+                                        $filter_company_type !== '' ? 'company_type=' . urlencode($filter_company_type) : '',
+                                    ]);
+                                    $clear_url = 'contacts.php' . (count($clear_params) ? '?' . implode('&', $clear_params) : '');
+                                    ?>
+                                    <a href="<?php echo htmlspecialchars($clear_url, ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-outline-secondary">
                                         Clear
                                     </a>
                                 <?php endif; ?>
@@ -238,7 +283,7 @@
                                     <?php if (empty($contacts)): ?>
                                         <tr>
                                             <td colspan="9" class="text-center text-muted">
-                                                <?php if ($search_query || $filter_status): ?>
+                                                <?php if ($search_query || $filter_status || $filter_company_id || $filter_company_type !== ''): ?>
                                                     No contacts found matching your criteria.
                                                 <?php else: ?>
                                                     No contacts found.

@@ -35,8 +35,10 @@ $status = isset($_POST['status']) ? (string) $_POST['status'] : 'open';
 $priority = isset($_POST['priority']) ? (string) $_POST['priority'] : 'medium';
 $contact_id = isset($_POST['contact_id']) ? trim((string) $_POST['contact_id']) : null;
 $deal_id = isset($_POST['deal_id']) ? trim((string) $_POST['deal_id']) : null;
+$company_id_raw = isset($_POST['company_id']) ? trim((string) $_POST['company_id']) : '';
 $assigned_to_raw = isset($_POST['assigned_to']) ? trim((string) $_POST['assigned_to']) : '';
 $due_at_raw = isset($_POST['due_at']) ? trim((string) $_POST['due_at']) : null;
+$company_id = (isset($company_id_raw) && $company_id_raw !== '' && ctype_digit($company_id_raw)) ? (int) $company_id_raw : null;
 
 $err = [];
 if ($title === '') {
@@ -81,8 +83,8 @@ if (!$pdo || isset($db_error)) {
 }
 
 try {
-    $sql = "INSERT INTO tasks (title, notes, status, priority, due_at, assigned_to, contact_id, deal_id)
-            VALUES (:title, :notes, :status, :priority, :due_at, :assigned_to, :contact_id, :deal_id)";
+    $sql = "INSERT INTO tasks (title, notes, status, priority, due_at, assigned_to, contact_id, deal_id, company_id)
+            VALUES (:title, :notes, :status, :priority, :due_at, :assigned_to, :contact_id, :deal_id, :company_id)";
     $params = [
         ':title'       => $title,
         ':notes'       => $notes ?: null,
@@ -92,6 +94,7 @@ try {
         ':assigned_to' => $assigned_to,
         ':contact_id'  => $contact_id ?: null,
         ':deal_id'     => $deal_id !== '' && ctype_digit($deal_id) ? (int) $deal_id : null,
+        ':company_id'  => $company_id,
     ];
     $st = $pdo->prepare($sql);
     $st->execute($params);

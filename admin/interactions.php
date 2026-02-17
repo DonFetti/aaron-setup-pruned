@@ -53,13 +53,16 @@
                     i.body,
                     i.occurred_at,
                     i.created_at,
+                    i.company_id,
                     c.id AS contact_id,
                     c.name AS contact_name,
                     d.id AS deal_id,
-                    d.name AS deal_name
+                    d.name AS deal_name,
+                    co.name AS company_name
                 FROM interactions i
                 INNER JOIN contacts c ON i.contact_id = c.id
                 LEFT JOIN deals d ON i.deal_id = d.id
+                LEFT JOIN companies co ON i.company_id = co.id
                 WHERE 1=1";
                 $params = [];
 
@@ -222,6 +225,7 @@
                                         <th>Direction</th>
                                         <th>Subject</th>
                                         <th>Contact</th>
+                                        <th>Company</th>
                                         <th>Deal</th>
                                         <th>Occurred</th>
                                         <th>Actions</th>
@@ -230,7 +234,7 @@
                                 <tbody>
                                     <?php if (empty($interactions)): ?>
                                         <tr>
-                                            <td colspan="7" class="text-center text-muted">
+                                            <td colspan="8" class="text-center text-muted">
                                                 <?php if ($search_query || $filter_type || $filter_direction): ?>
                                                     No interactions found matching your criteria.
                                                 <?php else: ?>
@@ -265,6 +269,13 @@
                                                 <td><?php echo $subject_display; ?></td>
                                                 <td>
                                                     <a href="contact.php?id=<?php echo htmlspecialchars($row['contact_id'], ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($row['contact_name'], ENT_QUOTES, 'UTF-8'); ?></a>
+                                                </td>
+                                                <td>
+                                                    <?php if (!empty($row['company_name'])): ?>
+                                                        <a href="company.php?id=<?php echo (int) $row['company_id']; ?>"><?php echo htmlspecialchars($row['company_name'], ENT_QUOTES, 'UTF-8'); ?></a>
+                                                    <?php else: ?>
+                                                        <span class="text-muted">—</span>
+                                                    <?php endif; ?>
                                                 </td>
                                                 <td>
                                                     <?php if ($row['deal_id'] && $row['deal_name']): ?>

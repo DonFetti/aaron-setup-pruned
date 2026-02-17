@@ -25,20 +25,26 @@ if ($username && $pdo && !isset($db_error)) {
 }
 
 $contacts = [];
+$companies = [];
 if ($pdo && !isset($db_error)) {
     try {
         $contacts = $pdo->query('SELECT id, name FROM contacts ORDER BY name')->fetchAll();
+    } catch (PDOException $e) { /* keep empty */ }
+    try {
+        $companies = $pdo->query('SELECT id, name FROM companies ORDER BY name')->fetchAll();
     } catch (PDOException $e) { /* keep empty */ }
 }
 
 // POST: create deal and redirect
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_deal'])) {
     $contact_id = isset($_POST['contact_id']) ? trim((string) $_POST['contact_id']) : '';
+    $company_id_raw = isset($_POST['company_id']) ? trim((string) $_POST['company_id']) : '';
     $name = isset($_POST['name']) ? trim((string) $_POST['name']) : '';
     $amount_raw = isset($_POST['amount']) ? trim((string) $_POST['amount']) : '';
     $stage = isset($_POST['stage']) ? trim((string) $_POST['stage']) : null;
     $close_date_raw = isset($_POST['close_date']) ? trim((string) $_POST['close_date']) : '';
     $type = isset($_POST['type']) ? trim((string) $_POST['type']) : null;
+    $company_id = (isset($company_id_raw) && $company_id_raw !== '' && ctype_digit($company_id_raw)) ? (int) $company_id_raw : null;
 
     $err = [];
     if ($contact_id === '') {
@@ -91,10 +97,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_deal'])) {
     }
 
     try {
-        $sql = "INSERT INTO deals (contact_id, name, amount, stage, close_date, type, created_by)
-                VALUES (:contact_id, :name, :amount, :stage, :close_date, :type, :created_by)";
+        $sql = "INSERT INTO deals (contact_id, company_id, name, amount, stage, close_date, type, created_by)
+                VALUES (:contact_id, :company_id, :name, :amount, :stage, :close_date, :type, :created_by)";
         $params = [
             ':contact_id' => $contact_id,
+            ':company_id' => $company_id,
             ':name'       => $name,
             ':amount'     => $amount,
             ':stage'      => $stage ?: null,
@@ -163,6 +170,15 @@ $flash_error = isset($_GET['error']) ? trim((string) $_GET['error']) : null;
                                     <option value="">— Select contact —</option>
                                     <?php foreach ($contacts as $c): ?>
                                         <option value="<?php echo htmlspecialchars($c['id'], ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($c['name'], ENT_QUOTES, 'UTF-8'); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="company_id" class="form-label">Company</label>
+                                <select class="form-select" id="company_id" name="company_id">
+                                    <option value="">— None —</option>
+                                    <?php foreach ($companies as $co): ?>
+                                        <option value="<?php echo (int) $co['id']; ?>"><?php echo htmlspecialchars($co['name'], ENT_QUOTES, 'UTF-8'); ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>

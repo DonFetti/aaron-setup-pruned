@@ -34,20 +34,24 @@ $deal_id = (int) $deal_id_raw;
 
 $deal = null;
 $contacts = [];
+$companies = [];
 $db_error = null;
 
 if ($pdo && !isset($db_error)) {
     try {
-        $stmt = $pdo->prepare("SELECT d.id, d.contact_id, d.name, d.amount, d.stage, d.close_date, d.type,
+        $stmt = $pdo->prepare("SELECT d.id, d.contact_id, d.company_id, d.name, d.amount, d.stage, d.close_date, d.type,
                                      d.created_at, d.won_at, d.lost_at, d.lost_reason,
-                                     c.name AS contact_name
+                                     c.name AS contact_name,
+                                     co.name AS company_name
                               FROM deals d
                               INNER JOIN contacts c ON d.contact_id = c.id
+                              LEFT JOIN companies co ON d.company_id = co.id
                               WHERE d.id = :id LIMIT 1");
         $stmt->execute([':id' => $deal_id]);
         $deal = $stmt->fetch();
         if ($deal) {
             $contacts = $pdo->query('SELECT id, name FROM contacts ORDER BY name')->fetchAll();
+            $companies = $pdo->query('SELECT id, name FROM companies ORDER BY name')->fetchAll();
         }
     } catch (PDOException $e) {
         $db_error = $e->getMessage();
@@ -113,11 +117,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mark_lost']) && $deal
 // Handle update
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_deal']) && $deal) {
     $contact_id = isset($_POST['contact_id']) ? trim((string) $_POST['contact_id']) : '';
+    $company_id_raw = isset($_POST['company_id']) ? trim((string) $_POST['company_id']) : '';
     $name = isset($_POST['name']) ? trim((string) $_POST['name']) : '';
     $amount_raw = isset($_POST['amount']) ? trim((string) $_POST['amount']) : '';
     $stage = isset($_POST['stage']) ? trim((string) $_POST['stage']) : null;
     $close_date_raw = isset($_POST['close_date']) ? trim((string) $_POST['close_date']) : '';
     $type = isset($_POST['type']) ? trim((string) $_POST['type']) : null;
+    $company_id = (isset($company_id_raw) && $company_id_raw !== '' && ctype_digit($company_id_raw)) ? (int) $company_id_raw : null;
 
     $err = [];
     if ($contact_id === '') {
@@ -157,6 +163,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_deal']) && $de
     try {
         $sql = "UPDATE deals SET
                     contact_id = :contact_id,
+                    company_id = :company_id,
                     name = :name,
                     amount = :amount,
                     stage = :stage,
@@ -168,6 +175,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_deal']) && $de
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
             ':contact_id'  => $contact_id,
+            ':company_id'  => $company_id,
             ':name'        => $name,
             ':amount'      => $amount,
             ':stage'       => $stage ?: null,
@@ -252,6 +260,15 @@ $is_open = !$deal['won_at'] && !$deal['lost_at'];
                                 </select>
                             </div>
                             <div class="mb-3">
+                                <label for="company_id" class="form-label">Company</label>
+                                <select class="form-select" id="company_id" name="company_id">
+                                    <option value="">— None —</option>
+                                    <?php foreach ($companies as $co): ?>
+                                        <option value="<?php echo (int) $co['id']; ?>" <?php echo $deal['company_id'] && (int) $co['id'] === (int) $deal['company_id'] ? 'selected' : ''; ?>><?php echo htmlspecialchars($co['name'], ENT_QUOTES, 'UTF-8'); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="mb-3">
                                 <label for="name" class="form-label">Deal name <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="name" name="name" required value="<?php echo htmlspecialchars($deal['name'], ENT_QUOTES, 'UTF-8'); ?>">
                             </div>
@@ -302,6 +319,12 @@ $is_open = !$deal['won_at'] && !$deal['lost_at'];
                         <p class="mb-3">
                             <a href="contact.php?id=<?php echo htmlspecialchars($deal['contact_id'], ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($deal['contact_name'], ENT_QUOTES, 'UTF-8'); ?></a>
                         </p>
+                        <?php if (!empty($deal['company_name'])): ?>
+                        <p class="text-muted small mb-1">Company</p>
+                        <p class="mb-3">
+                            <a href="company.php?id=<?php echo (int) $deal['company_id']; ?>"><?php echo htmlspecialchars($deal['company_name'], ENT_QUOTES, 'UTF-8'); ?></a>
+                        </p>
+                        <?php endif; ?>
                         <p class="text-muted small mb-1">Created</p>
                         <p class="mb-3"><?php echo $created_date ? $created_date->format('M d, Y') : '—'; ?></p>
                         <p class="text-muted small mb-1">Deal ID</p>

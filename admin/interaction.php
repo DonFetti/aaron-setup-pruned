@@ -16,25 +16,29 @@ $interaction_id = (int) $interaction_id_raw;
 $interaction = null;
 $contacts = [];
 $deals = [];
+$companies = [];
 $db_error = null;
 $allowed_types = ['call', 'email', 'meeting', 'sms', 'note'];
 $allowed_directions = ['inbound', 'outbound'];
 
 if ($pdo && !isset($db_error)) {
     try {
-        $stmt = $pdo->prepare("SELECT i.id, i.contact_id, i.deal_id, i.type, i.direction, i.subject, i.body,
+        $stmt = $pdo->prepare("SELECT i.id, i.contact_id, i.deal_id, i.company_id, i.type, i.direction, i.subject, i.body,
                                       i.occurred_at, i.created_at,
                                       c.name AS contact_name,
-                                      d.name AS deal_name
+                                      d.name AS deal_name,
+                                      co.name AS company_name
                                FROM interactions i
                                INNER JOIN contacts c ON i.contact_id = c.id
                                LEFT JOIN deals d ON i.deal_id = d.id
+                               LEFT JOIN companies co ON i.company_id = co.id
                                WHERE i.id = :id LIMIT 1");
         $stmt->execute([':id' => $interaction_id]);
         $interaction = $stmt->fetch();
         if ($interaction) {
             $contacts = $pdo->query('SELECT id, name FROM contacts ORDER BY name')->fetchAll();
             $deals = $pdo->query('SELECT id, name FROM deals ORDER BY name')->fetchAll();
+            $companies = $pdo->query('SELECT id, name FROM companies ORDER BY name')->fetchAll();
         }
     } catch (PDOException $e) {
         $db_error = $e->getMessage();
@@ -62,7 +66,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_interaction'])
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_interaction']) && $interaction) {
     $contact_id = isset($_POST['contact_id']) ? trim((string) $_POST['contact_id']) : '';
     $deal_id_raw = isset($_POST['deal_id']) ? trim((string) $_POST['deal_id']) : '';
+    $company_id_raw = isset($_POST['company_id']) ? trim((string) $_POST['company_id']) : '';
     $type = isset($_POST['type']) ? trim((string) $_POST['type']) : '';
+    $company_id = (isset($company_id_raw) && $company_id_raw !== '' && ctype_digit($company_id_raw)) ? (int) $company_id_raw : null;
     $direction = isset($_POST['direction']) ? trim((string) $_POST['direction']) : null;
     $subject = isset($_POST['subject']) ? trim((string) $_POST['subject']) : null;
     $body = isset($_POST['body']) ? trim((string) $_POST['body']) : null;
@@ -112,15 +118,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_interaction'])
     }
 
     try {
-        $sql = "UPDATE interactions SET contact_id = :contact_id, deal_id = :deal_id, type = :type, direction = :direction,
+        $sql = "UPDATE interactions SET contact_id = :contact_id, deal_id = :deal_id, company_id = :company_id, type = :type, direction = :direction,
                 subject = :subject, body = :body, occurred_at = CAST(:occurred_at AS timestamp without time zone)
                 WHERE id = :id";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
             ':contact_id'  => $contact_id,
             ':deal_id'     => $deal_id,
+            ':company_id'  => $company_id,
             ':type'        => $type,
-            ':direction'   => $direction,
+            ':direction'  => $direction,
             ':subject'     => $subject ?: null,
             ':body'        => $body ?: null,
             ':occurred_at' => $occurred_at ?: $interaction['occurred_at'],
@@ -209,6 +216,15 @@ $created_dt = $interaction['created_at'] ? new DateTime($interaction['created_at
                                     <?php endforeach; ?>
                                 </select>
                             </div>
+                            <div class="mb-3">
+                                <label for="company_id" class="form-label">Company</label>
+                                <select class="form-select" id="company_id" name="company_id">
+                                    <option value="">— None —</option>
+                                    <?php foreach ($companies as $co): ?>
+                                        <option value="<?php echo (int) $co['id']; ?>" <?php echo $interaction['company_id'] && (int) $co['id'] === (int) $interaction['company_id'] ? 'selected' : ''; ?>><?php echo htmlspecialchars($co['name'], ENT_QUOTES, 'UTF-8'); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="type" class="form-label">Type <span class="text-danger">*</span></label>
@@ -263,6 +279,12 @@ $created_dt = $interaction['created_at'] ? new DateTime($interaction['created_at
                         <p class="mb-3">
                             <a href="contact.php?id=<?php echo htmlspecialchars($interaction['contact_id'], ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($interaction['contact_name'], ENT_QUOTES, 'UTF-8'); ?></a>
                         </p>
+                        <?php if (!empty($interaction['company_name'])): ?>
+                        <p class="text-muted small mb-1">Company</p>
+                        <p class="mb-3">
+                            <a href="company.php?id=<?php echo (int) $interaction['company_id']; ?>"><?php echo htmlspecialchars($interaction['company_name'], ENT_QUOTES, 'UTF-8'); ?></a>
+                        </p>
+                        <?php endif; ?>
                         <?php if ($interaction['deal_id'] && $interaction['deal_name']): ?>
                             <p class="text-muted small mb-1">Deal</p>
                             <p class="mb-3">
