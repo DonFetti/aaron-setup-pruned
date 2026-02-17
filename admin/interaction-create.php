@@ -29,7 +29,7 @@ $deals = [];
 $companies = [];
 if ($pdo && !isset($db_error)) {
     try {
-        $contacts = $pdo->query('SELECT id, name FROM contacts ORDER BY name')->fetchAll();
+        $contacts = $pdo->query('SELECT id, name, company_id FROM contacts ORDER BY name')->fetchAll();
     } catch (PDOException $e) { /* keep empty */ }
     try {
         $deals = $pdo->query('SELECT id, name FROM deals ORDER BY name')->fetchAll();
@@ -213,13 +213,24 @@ $default_time = date('H:i');
                         <form method="POST" action="">
                             <input type="hidden" name="create_interaction" value="1">
                             <div class="mb-3">
-                                <label for="contact_id" class="form-label">Contact <span class="text-danger">*</span></label>
-                                <select class="form-select" id="contact_id" name="contact_id" required>
-                                    <option value="">— Select contact —</option>
-                                    <?php foreach ($contacts as $c): ?>
-                                        <option value="<?php echo htmlspecialchars($c['id'], ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($c['name'], ENT_QUOTES, 'UTF-8'); ?></option>
+                                <label for="company_id" class="form-label">Company</label>
+                                <select class="form-select" id="company_id" name="company_id" aria-describedby="company_help_int">
+                                    <option value="">— None —</option>
+                                    <?php foreach ($companies as $co): ?>
+                                        <option value="<?php echo (int) $co['id']; ?>"><?php echo htmlspecialchars($co['name'], ENT_QUOTES, 'UTF-8'); ?></option>
                                     <?php endforeach; ?>
                                 </select>
+                                <div id="company_help_int" class="form-text">Optionally select a company first to limit contacts to that company.</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="contact_id" class="form-label">Contact <span class="text-danger">*</span></label>
+                                <select class="form-select" id="contact_id" name="contact_id" required aria-describedby="contact_help_int">
+                                    <option value="">— Select contact —</option>
+                                    <?php foreach ($contacts as $c): ?>
+                                        <option value="<?php echo htmlspecialchars($c['id'], ENT_QUOTES, 'UTF-8'); ?>" data-company-id="<?php echo $c['company_id'] !== null ? (int) $c['company_id'] : ''; ?>"><?php echo htmlspecialchars($c['name'], ENT_QUOTES, 'UTF-8'); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <div id="contact_help_int" class="form-text">If a company is selected, only contacts from that company are shown.</div>
                             </div>
                             <div class="mb-3">
                                 <label for="deal_id" class="form-label">Deal</label>
@@ -227,15 +238,6 @@ $default_time = date('H:i');
                                     <option value="">— None —</option>
                                     <?php foreach ($deals as $d): ?>
                                         <option value="<?php echo (int) $d['id']; ?>"><?php echo htmlspecialchars($d['name'], ENT_QUOTES, 'UTF-8'); ?></option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="company_id" class="form-label">Company</label>
-                                <select class="form-select" id="company_id" name="company_id">
-                                    <option value="">— None —</option>
-                                    <?php foreach ($companies as $co): ?>
-                                        <option value="<?php echo (int) $co['id']; ?>"><?php echo htmlspecialchars($co['name'], ENT_QUOTES, 'UTF-8'); ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
@@ -291,5 +293,27 @@ $default_time = date('H:i');
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script>
+    (function() {
+        var companySelect = document.getElementById('company_id');
+        var contactSelect = document.getElementById('contact_id');
+        if (!companySelect || !contactSelect) return;
+        function filterContacts() {
+            var companyVal = companySelect.value;
+            var firstOpt = contactSelect.options[0];
+            for (var i = 1; i < contactSelect.options.length; i++) {
+                var opt = contactSelect.options[i];
+                if (!companyVal) {
+                    opt.style.display = '';
+                } else {
+                    opt.style.display = (opt.getAttribute('data-company-id') === companyVal) ? '' : 'none';
+                }
+            }
+            if (companyVal) contactSelect.value = '';
+        }
+        companySelect.addEventListener('change', filterContacts);
+        filterContacts();
+    })();
+    </script>
 </body>
 </html>

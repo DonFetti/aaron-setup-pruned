@@ -28,7 +28,7 @@ $contacts = [];
 $companies = [];
 if ($pdo && !isset($db_error)) {
     try {
-        $contacts = $pdo->query('SELECT id, name FROM contacts ORDER BY name')->fetchAll();
+        $contacts = $pdo->query('SELECT id, name, company_id FROM contacts ORDER BY name')->fetchAll();
     } catch (PDOException $e) { /* keep empty */ }
     try {
         $companies = $pdo->query('SELECT id, name FROM companies ORDER BY name')->fetchAll();
@@ -47,8 +47,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_deal'])) {
     $company_id = (isset($company_id_raw) && $company_id_raw !== '' && ctype_digit($company_id_raw)) ? (int) $company_id_raw : null;
 
     $err = [];
-    if ($contact_id === '') {
-        $err[] = 'Contact is required.';
+    if ($company_id === null || $company_id < 1) {
+        $err[] = 'Company is required.';
     }
     if ($name === '') {
         $err[] = 'Deal name is required.';
@@ -83,12 +83,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_deal'])) {
         exit;
     }
 
-    // Verify contact exists
+    // Verify company exists
     try {
-        $st = $pdo->prepare("SELECT id FROM contacts WHERE id = :id LIMIT 1");
-        $st->execute([':id' => $contact_id]);
+        $st = $pdo->prepare("SELECT id FROM companies WHERE id = :id LIMIT 1");
+        $st->execute([':id' => $company_id]);
         if (!$st->fetch()) {
-            header('Location: /admin/deal-create.php?error=' . urlencode('Selected contact not found.'));
+            header('Location: /admin/deal-create.php?error=' . urlencode('Selected company not found.'));
             exit;
         }
     } catch (PDOException $e) {
@@ -96,11 +96,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_deal'])) {
         exit;
     }
 
+    // If contact provided, verify it exists and belongs to the company
+    $contact_id_param = null;
+    if ($contact_id !== '') {
+        try {
+            $st = $pdo->prepare("SELECT id FROM contacts WHERE id = :id AND company_id = :company_id LIMIT 1");
+            $st->execute([':id' => $contact_id, ':company_id' => $company_id]);
+            if ($st->fetch()) {
+                $contact_id_param = $contact_id;
+            }
+        } catch (PDOException $e) { /* ignore */ }
+    }
+
     try {
         $sql = "INSERT INTO deals (contact_id, company_id, name, amount, stage, close_date, type, created_by)
                 VALUES (:contact_id, :company_id, :name, :amount, :stage, :close_date, :type, :created_by)";
         $params = [
-            ':contact_id' => $contact_id,
+            ':contact_id' => $contact_id_param,
             ':company_id' => $company_id,
             ':name'       => $name,
             ':amount'     => $amount,
@@ -165,22 +177,24 @@ $flash_error = isset($_GET['error']) ? trim((string) $_GET['error']) : null;
                         <form method="POST" action="">
                             <input type="hidden" name="create_deal" value="1">
                             <div class="mb-3">
-                                <label for="contact_id" class="form-label">Contact <span class="text-danger">*</span></label>
-                                <select class="form-select" id="contact_id" name="contact_id" required>
-                                    <option value="">— Select contact —</option>
-                                    <?php foreach ($contacts as $c): ?>
-                                        <option value="<?php echo htmlspecialchars($c['id'], ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($c['name'], ENT_QUOTES, 'UTF-8'); ?></option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="company_id" class="form-label">Company</label>
-                                <select class="form-select" id="company_id" name="company_id">
-                                    <option value="">— None —</option>
+                                <label for="company_id" class="form-label">Company <span class="text-danger">*</span></label>
+                                <select class="form-select" id="company_id" name="company_id" required aria-describedby="company_help">
+                                    <option value="">— Select company —</option>
                                     <?php foreach ($companies as $co): ?>
                                         <option value="<?php echo (int) $co['id']; ?>"><?php echo htmlspecialchars($co['name'], ENT_QUOTES, 'UTF-8'); ?></option>
                                     <?php endforeach; ?>
                                 </select>
+                                <div id="company_help" class="form-text">Select a company first; then you can optionally link a contact from that company.</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="contact_id" class="form-label">Contact</label>
+                                <select class="form-select" id="contact_id" name="contact_id" disabled aria-describedby="contact_help">
+                                    <option value="" id="contact_placeholder">— Select company first —</option>
+                                    <?php foreach ($contacts as $c): ?>
+                                        <option value="<?php echo htmlspecialchars($c['id'], ENT_QUOTES, 'UTF-8'); ?>" data-company-id="<?php echo $c['company_id'] !== null ? (int) $c['company_id'] : ''; ?>"><?php echo htmlspecialchars($c['name'], ENT_QUOTES, 'UTF-8'); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <div id="contact_help" class="form-text">Only contacts from the selected company are shown.</div>
                             </div>
                             <div class="mb-3">
                                 <label for="name" class="form-label">Deal name <span class="text-danger">*</span></label>
@@ -214,5 +228,34 @@ $flash_error = isset($_GET['error']) ? trim((string) $_GET['error']) : null;
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script>
+    (function() {
+        var companySelect = document.getElementById('company_id');
+        var contactSelect = document.getElementById('contact_id');
+        var contactPlaceholder = document.getElementById('contact_placeholder');
+        if (!companySelect || !contactSelect) return;
+        function filterContacts() {
+            var companyVal = companySelect.value;
+            if (!companyVal) {
+                contactPlaceholder.textContent = '— Select company first —';
+                contactSelect.disabled = true;
+                contactSelect.value = '';
+                for (var i = 1; i < contactSelect.options.length; i++) {
+                    contactSelect.options[i].style.display = 'none';
+                }
+            } else {
+                contactPlaceholder.textContent = '— None —';
+                contactSelect.disabled = false;
+                contactSelect.value = '';
+                for (var i = 1; i < contactSelect.options.length; i++) {
+                    var opt = contactSelect.options[i];
+                    opt.style.display = (opt.getAttribute('data-company-id') === companyVal) ? '' : 'none';
+                }
+            }
+        }
+        companySelect.addEventListener('change', filterContacts);
+        filterContacts();
+    })();
+    </script>
 </body>
 </html>
