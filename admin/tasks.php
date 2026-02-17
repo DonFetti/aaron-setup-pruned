@@ -39,11 +39,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mark_done'])) {
     <meta name="robots" content="noindex, nofollow">
     <title>Tasks - CRM Dashboard</title>
     <!-- Import bootstrap with main.css -->
-    <?php include 'partials/header.php'; ?>
+    <?php include __DIR__ . '/partials/header.php'; ?>
 </head>
 <body>
     <!-- Navbar -->
-    <?php include 'partials/nav.php'; ?>
+    <?php include __DIR__ . '/partials/nav.php'; ?>
 
     <!-- Main Content -->
     <div class="container-fluid mt-4">
