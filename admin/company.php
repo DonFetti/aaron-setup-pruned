@@ -14,6 +14,9 @@ if ($company_id <= 0) {
 
 $company = null;
 $contacts = [];
+$deals = [];
+$tasks = [];
+$interactions = [];
 $db_error = null;
 
 if ($pdo && !isset($db_error)) {
@@ -29,6 +32,37 @@ if ($pdo && !isset($db_error)) {
                                    ORDER BY name ASC");
             $stmt->execute([':company_id' => $company_id]);
             $contacts = $stmt->fetchAll();
+
+            $stmt = $pdo->prepare("SELECT d.id, d.name, d.amount, d.stage, d.close_date, d.won_at, d.lost_at, d.created_at,
+                                   c.name AS contact_name, c.id AS contact_id
+                                   FROM deals d
+                                   INNER JOIN contacts c ON d.contact_id = c.id
+                                   WHERE d.company_id = :company_id
+                                   ORDER BY d.created_at DESC");
+            $stmt->execute([':company_id' => $company_id]);
+            $deals = $stmt->fetchAll();
+
+            $stmt = $pdo->prepare("SELECT t.id, t.title, t.status, t.priority, t.due_at, t.created_at,
+                                   c.name AS contact_name, c.id AS contact_id,
+                                   d.name AS deal_name, d.id AS deal_id
+                                   FROM tasks t
+                                   LEFT JOIN contacts c ON t.contact_id = c.id
+                                   LEFT JOIN deals d ON t.deal_id = d.id
+                                   WHERE t.company_id = :company_id
+                                   ORDER BY CASE t.priority WHEN 'high' THEN 1 WHEN 'medium' THEN 2 WHEN 'low' THEN 3 END, t.due_at ASC NULLS LAST");
+            $stmt->execute([':company_id' => $company_id]);
+            $tasks = $stmt->fetchAll();
+
+            $stmt = $pdo->prepare("SELECT i.id, i.type, i.direction, i.subject, i.occurred_at, i.created_at,
+                                   c.name AS contact_name, c.id AS contact_id,
+                                   d.name AS deal_name, d.id AS deal_id
+                                   FROM interactions i
+                                   INNER JOIN contacts c ON i.contact_id = c.id
+                                   LEFT JOIN deals d ON i.deal_id = d.id
+                                   WHERE i.company_id = :company_id
+                                   ORDER BY i.occurred_at DESC");
+            $stmt->execute([':company_id' => $company_id]);
+            $interactions = $stmt->fetchAll();
         }
     } catch (PDOException $e) {
         $db_error = $e->getMessage();
@@ -134,6 +168,166 @@ $created_date = !empty($company['created_at']) ? new DateTime($company['created_
                                                 <td>
                                                     <a href="contact.php?id=<?php echo htmlspecialchars($contact['id'], ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-sm btn-outline-primary">View</a>
                                                 </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Deals -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Deals (<?php echo count($deals); ?>)</h5>
+                        <a href="/admin/deal-create.php" class="btn btn-sm btn-primary">Add Deal</a>
+                    </div>
+                    <div class="card-body">
+                        <?php if (empty($deals)): ?>
+                            <p class="text-muted mb-0">No deals linked to this company yet.</p>
+                        <?php else: ?>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Deal</th>
+                                            <th>Contact</th>
+                                            <th>Amount</th>
+                                            <th>Stage</th>
+                                            <th>Close Date</th>
+                                            <th>Status</th>
+                                            <th>Created</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach ($deals as $deal): ?>
+                                            <?php
+                                            $deal_created = !empty($deal['created_at']) ? new DateTime($deal['created_at']) : null;
+                                            $close_date = !empty($deal['close_date']) ? new DateTime($deal['close_date']) : null;
+                                            if ($deal['won_at']) { $deal_status = 'won'; $deal_status_class = 'bg-success'; }
+                                            elseif ($deal['lost_at']) { $deal_status = 'lost'; $deal_status_class = 'bg-danger'; }
+                                            else { $deal_status = 'open'; $deal_status_class = 'bg-primary'; }
+                                            $amount = $deal['amount'] !== null ? number_format((float) $deal['amount'], 2) : null;
+                                            ?>
+                                            <tr>
+                                                <td><?php echo htmlspecialchars($deal['name'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                                <td><a href="contact.php?id=<?php echo htmlspecialchars($deal['contact_id'], ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($deal['contact_name'], ENT_QUOTES, 'UTF-8'); ?></a></td>
+                                                <td><?php echo $amount !== null ? '$' . $amount : '<span class="text-muted">—</span>'; ?></td>
+                                                <td><?php echo $deal['stage'] ? htmlspecialchars($deal['stage'], ENT_QUOTES, 'UTF-8') : '<span class="text-muted">—</span>'; ?></td>
+                                                <td><?php echo $close_date ? $close_date->format('M d, Y') : '<span class="text-muted">—</span>'; ?></td>
+                                                <td><span class="badge <?php echo $deal_status_class; ?>"><?php echo ucfirst($deal_status); ?></span></td>
+                                                <td><?php echo $deal_created ? $deal_created->format('M d, Y') : '—'; ?></td>
+                                                <td><a href="deal.php?id=<?php echo (int) $deal['id']; ?>" class="btn btn-sm btn-outline-primary">View</a></td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tasks -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Tasks (<?php echo count($tasks); ?>)</h5>
+                        <a href="/admin/tasks.php" class="btn btn-sm btn-primary">Add Task</a>
+                    </div>
+                    <div class="card-body">
+                        <?php if (empty($tasks)): ?>
+                            <p class="text-muted mb-0">No tasks linked to this company yet.</p>
+                        <?php else: ?>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Title</th>
+                                            <th>Status</th>
+                                            <th>Priority</th>
+                                            <th>Due Date</th>
+                                            <th>Related To</th>
+                                            <th>Created</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach ($tasks as $task): ?>
+                                            <?php
+                                            $task_due = !empty($task['due_at']) ? new DateTime($task['due_at']) : null;
+                                            $task_created = !empty($task['created_at']) ? new DateTime($task['created_at']) : null;
+                                            $task_status_class = $task['status'] === 'open' ? 'bg-primary' : ($task['status'] === 'done' ? 'bg-success' : 'bg-secondary');
+                                            $task_priority_class = $task['priority'] === 'high' ? 'bg-danger' : ($task['priority'] === 'medium' ? 'bg-warning' : 'bg-info');
+                                            $related = $task['contact_name'] ? ('Contact: ' . $task['contact_name']) : ($task['deal_name'] ? ('Deal: ' . $task['deal_name']) : '—');
+                                            ?>
+                                            <tr>
+                                                <td><?php echo htmlspecialchars($task['title'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                                <td><span class="badge <?php echo $task_status_class; ?>"><?php echo ucfirst($task['status']); ?></span></td>
+                                                <td><span class="badge <?php echo $task_priority_class; ?>"><?php echo ucfirst($task['priority']); ?></span></td>
+                                                <td><?php echo $task_due ? $task_due->format('M d, Y') : '<span class="text-muted">—</span>'; ?></td>
+                                                <td><?php echo $task['contact_name'] ? '<a href="contact.php?id=' . htmlspecialchars($task['contact_id'], ENT_QUOTES, 'UTF-8') . '">' . htmlspecialchars($task['contact_name'], ENT_QUOTES, 'UTF-8') . '</a>' : ($task['deal_name'] ? '<a href="deal.php?id=' . (int) $task['deal_id'] . '">' . htmlspecialchars($task['deal_name'], ENT_QUOTES, 'UTF-8') . '</a>' : '<span class="text-muted">—</span>'); ?></td>
+                                                <td><?php echo $task_created ? $task_created->format('M d, Y') : '—'; ?></td>
+                                                <td><a href="task.php?id=<?php echo (int) $task['id']; ?>" class="btn btn-sm btn-outline-primary">View</a></td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interactions -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Interactions (<?php echo count($interactions); ?>)</h5>
+                        <a href="/admin/interaction-create.php" class="btn btn-sm btn-primary">Add Interaction</a>
+                    </div>
+                    <div class="card-body">
+                        <?php if (empty($interactions)): ?>
+                            <p class="text-muted mb-0">No interactions linked to this company yet.</p>
+                        <?php else: ?>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Type</th>
+                                            <th>Direction</th>
+                                            <th>Subject</th>
+                                            <th>Contact</th>
+                                            <th>Deal</th>
+                                            <th>Occurred</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach ($interactions as $int): ?>
+                                            <?php
+                                            $int_occurred = !empty($int['occurred_at']) ? new DateTime($int['occurred_at']) : null;
+                                            $subject_display = $int['subject'] !== null && $int['subject'] !== '' ? htmlspecialchars(mb_strimwidth($int['subject'], 0, 50, '…'), ENT_QUOTES, 'UTF-8') : '<span class="text-muted">—</span>';
+                                            $int_type_class = $int['type'] === 'call' ? 'bg-info' : ($int['type'] === 'email' ? 'bg-primary' : ($int['type'] === 'meeting' ? 'bg-success' : 'bg-secondary'));
+                                            ?>
+                                            <tr>
+                                                <td><span class="badge <?php echo $int_type_class; ?>"><?php echo ucfirst($int['type']); ?></span></td>
+                                                <td><?php echo $int['direction'] ? '<span class="badge bg-light text-dark">' . ucfirst($int['direction']) . '</span>' : '<span class="text-muted">—</span>'; ?></td>
+                                                <td><?php echo $subject_display; ?></td>
+                                                <td><a href="contact.php?id=<?php echo htmlspecialchars($int['contact_id'], ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($int['contact_name'], ENT_QUOTES, 'UTF-8'); ?></a></td>
+                                                <td><?php echo $int['deal_id'] && $int['deal_name'] ? '<a href="deal.php?id=' . (int) $int['deal_id'] . '">' . htmlspecialchars($int['deal_name'], ENT_QUOTES, 'UTF-8') . '</a>' : '<span class="text-muted">—</span>'; ?></td>
+                                                <td><?php echo $int_occurred ? $int_occurred->format('M d, Y H:i') : '<span class="text-muted">—</span>'; ?></td>
+                                                <td><a href="interaction.php?id=<?php echo (int) $int['id']; ?>" class="btn btn-sm btn-outline-primary">View</a></td>
                                             </tr>
                                         <?php endforeach; ?>
                                     </tbody>
