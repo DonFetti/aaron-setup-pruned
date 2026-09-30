@@ -21,3 +21,4 @@ rsync.exclude
 .htaccess
 php.ini
 admin/db.php
+.cursor/rules/
