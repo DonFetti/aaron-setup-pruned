@@ -362,10 +362,73 @@ li {
     margin-bottom: 0vh;
     margin-top: 2vh;
     font-size: 2rem;
-    text-decoration: underline;
+    text-decoration: none;
     font-family: $font-montserrat;
     font-weight: 600; // Montserrat SemiBold/Medium
     text-transform: none; // Allow lowercase for better readability
+
+    a {
+        color: $color-brown;
+        text-decoration: underline;
+        text-underline-offset: 0.12em;
+        text-decoration-thickness: 2px;
+
+        &::after {
+            content: "";
+            display: inline-block;
+            width: 0.38em;
+            height: 0.38em;
+            margin-left: 0.4em;
+            border-right: 2px solid currentColor;
+            border-top: 2px solid currentColor;
+            transform: rotate(45deg);
+            vertical-align: 0.05em;
+        }
+
+        &:hover,
+        &:focus-visible {
+            color: $color-gold-hover;
+        }
+
+        &:focus-visible {
+            outline: 2px solid $color-gold;
+            outline-offset: 4px;
+        }
+    }
+}
+
+.service-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    margin-top: 0.25rem;
+
+    a {
+        display: inline-block;
+        border: 1px solid $color-brown;
+        background: transparent;
+        color: $color-brown;
+        border-radius: 999px;
+        padding: 0.3rem 0.85rem;
+        font-size: 0.95rem;
+        font-weight: 600;
+        line-height: 1.2;
+        text-decoration: none;
+
+        &:hover,
+        &:focus-visible {
+            background: $color-black;
+            border-color: $color-black;
+            color: $color-white;
+        }
+
+        &:focus-visible {
+            outline: 2px solid $color-gold;
+            outline-offset: 2px;
+        }
+    }
 }
 
 .services-description {

@@ -326,10 +326,64 @@ li {
   margin-bottom: 0vh;
   margin-top: 2vh;
   font-size: 2rem;
-  text-decoration: underline;
+  text-decoration: none;
   font-family: "Montserrat", sans-serif;
   font-weight: 600;
   text-transform: none;
+}
+.service-headers a {
+  color: #84641c;
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+  text-decoration-thickness: 2px;
+}
+.service-headers a::after {
+  content: "";
+  display: inline-block;
+  width: 0.38em;
+  height: 0.38em;
+  margin-left: 0.4em;
+  border-right: 2px solid currentColor;
+  border-top: 2px solid currentColor;
+  transform: rotate(45deg);
+  vertical-align: 0.05em;
+}
+.service-headers a:hover, .service-headers a:focus-visible {
+  color: #a27b20;
+}
+.service-headers a:focus-visible {
+  outline: 2px solid #c49528;
+  outline-offset: 4px;
+}
+
+.service-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  margin-top: 0.25rem;
+}
+.service-list a {
+  display: inline-block;
+  border: 1px solid #84641c;
+  background: transparent;
+  color: #84641c;
+  border-radius: 999px;
+  padding: 0.3rem 0.85rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-decoration: none;
+}
+.service-list a:hover, .service-list a:focus-visible {
+  background: #000000;
+  border-color: #000000;
+  color: #ffffff;
+}
+.service-list a:focus-visible {
+  outline: 2px solid #c49528;
+  outline-offset: 2px;
 }
 
 .services-description {
