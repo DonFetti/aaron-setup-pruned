@@ -53,9 +53,7 @@ async function loadProjectBySlug(slug) {
         
         // Populate project data
         populateProjectData(project, slug);
-        
-        // Update page title
-        document.title = `${project.title} | Project Details`;
+        updateProjectMetadata(project, slug);
         
     } catch (error) {
         console.error('Error loading project:', error);
@@ -63,6 +61,71 @@ async function loadProjectBySlug(slug) {
         errorState.classList.remove('d-none');
         projectContent.classList.add('d-none');
     }
+}
+
+/**
+ * Point the title, description, share tags, and canonical URL at this project.
+ * @param {Object} project - Project data object
+ * @param {string} slug - Project slug
+ */
+function updateProjectMetadata(project, slug) {
+    const pageTitle = `${project.title} | Spear Contracting`;
+    const description = shortenText(project.description, 160);
+    const pageUrl = `https://www.spearcontracting.ca/project.html?slug=${encodeURIComponent(slug)}`;
+    const imageUrl = project.coverImage
+        ? new URL(project.coverImage, 'https://www.spearcontracting.ca/').href
+        : 'https://www.spearcontracting.ca/images/Logos/Spear%20Contracting%20Round%20Logo.png';
+
+    document.title = pageTitle;
+    setMetaContent('meta-description', description);
+    setMetaContent('og-title', pageTitle);
+    setMetaContent('og-description', description);
+    setMetaContent('og-image', imageUrl);
+    setMetaContent('og-url', pageUrl);
+    setMetaContent('twitter-title', pageTitle);
+    setMetaContent('twitter-description', description);
+    setMetaContent('twitter-image', imageUrl);
+
+    const canonical = document.getElementById('meta-canonical');
+    if (canonical) {
+        canonical.href = pageUrl;
+    }
+
+    const jsonLd = document.getElementById('project-jsonld');
+    if (jsonLd) {
+        const data = JSON.parse(jsonLd.textContent);
+        data.name = project.title;
+        data.description = description;
+        data.url = pageUrl;
+        data.primaryImageOfPage = imageUrl;
+        jsonLd.textContent = JSON.stringify(data, null, 4);
+    }
+}
+
+/**
+ * @param {string} id - Element id
+ * @param {string} value - New content attribute
+ */
+function setMetaContent(id, value) {
+    const element = document.getElementById(id);
+    if (element && value) {
+        element.setAttribute('content', value);
+    }
+}
+
+/**
+ * @param {string} text - Source text
+ * @param {number} maxLength - Maximum length
+ * @returns {string}
+ */
+function shortenText(text, maxLength) {
+    const clean = (text || '').replace(/\s+/g, ' ').trim();
+    if (clean.length <= maxLength) {
+        return clean;
+    }
+    const cut = clean.slice(0, maxLength - 1);
+    const lastSpace = cut.lastIndexOf(' ');
+    return `${(lastSpace > 40 ? cut.slice(0, lastSpace) : cut).trim()}…`;
 }
 
 /**
