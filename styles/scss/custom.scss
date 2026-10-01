@@ -280,6 +280,61 @@ li {
     }
 }
 
+.about .recent-work-lead {
+    max-width: 40rem;
+    margin: 0 auto 1.75rem;
+    font-size: 1.15rem;
+}
+
+.recent-work-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: $color-white;
+    color: $color-text;
+    text-align: left;
+    text-decoration: none;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+
+    img {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+    }
+
+    .recent-work-title {
+        font-weight: 600;
+        font-size: 1.15rem;
+        padding: 0.9rem 1rem 0.15rem;
+    }
+
+    .recent-work-place {
+        color: $color-gray;
+        font-size: 0.95rem;
+        padding: 0 1rem 1rem;
+    }
+
+    &:hover {
+        color: $color-text;
+    }
+}
+
+.recent-work-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 1.75rem;
+}
+
+.recent-work-btn {
+    display: inline-block;
+    margin-bottom: 0;
+    text-decoration: none;
+}
+
 // Contact
 .contact-btn {
     background-color: $color-black;
