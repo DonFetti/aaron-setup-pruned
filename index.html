@@ -237,7 +237,12 @@
                             </div>
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email:</label>
-                                <input type="email" id="email" name="email" required class="form-control">
+                                <input type="email" id="email" name="email" class="form-control" autocomplete="email">
+                            </div>
+                            <div class="mb-3">
+                                <label for="phone" class="form-label">Phone:</label>
+                                <input type="tel" id="phone" name="phone" class="form-control" inputmode="tel" autocomplete="tel" placeholder="(289) 684-7437">
+                                <small class="form-text text-muted">Email or phone is enough. Phone numbers use a 10-digit North American format.</small>
                             </div>
                             <div class="mb-3">
                                 <label for="timeline" class="form-label">Estimated Timeline:</label>

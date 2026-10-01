@@ -25,6 +25,7 @@ if ($is_direct_access && $_SERVER['REQUEST_METHOD'] !== 'POST') {
 // Get form data
 $name = isset($_POST['name']) ? trim($_POST['name']) : '';
 $email = isset($_POST['email']) ? trim($_POST['email']) : '';
+$phone = isset($_POST['phone']) ? trim($_POST['phone']) : '';
 $message = isset($_POST['message']) ? trim($_POST['message']) : '';
 $timeline = isset($_POST['timeline']) ? trim($_POST['timeline']) : '';
 $honeypot = isset($_POST['website']) ? trim($_POST['website']) : '';
@@ -36,11 +37,26 @@ if (!empty($honeypot)) {
     exit;
 }
 
-// Validate required fields
-if (empty($name) || empty($email) || empty($message)) {
+// Validate required fields. Email or phone is enough.
+if (empty($name) || empty($message)) {
     http_response_code(400);
-    echo json_encode(['status' => 'error', 'message' => 'All fields are required']);
+    echo json_encode(['status' => 'error', 'message' => 'Name and message are required']);
     exit;
+}
+if ($email === '' && $phone === '') {
+    http_response_code(400);
+    echo json_encode(['status' => 'error', 'message' => 'Enter an email or a phone number.']);
+    exit;
+}
+
+$normalizedPhone = '';
+if ($phone !== '') {
+    $normalizedPhone = normalize_nanp_phone($phone);
+    if ($normalizedPhone === null) {
+        http_response_code(400);
+        echo json_encode(['status' => 'error', 'message' => 'Enter a valid 10-digit phone number.']);
+        exit;
+    }
 }
 
 // Length caps validation
@@ -57,18 +73,13 @@ if (strlen($message) > $maxMessageLength) {
     exit;
 }
 
-// Validate email format
-if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    http_response_code(400);
-    echo json_encode(['status' => 'error', 'message' => 'Invalid email address']);
-    exit;
-}
-
-// Block CR/LF in email (prevent header injection)
-if (strpos($email, "\r") !== false || strpos($email, "\n") !== false) {
-    http_response_code(400);
-    echo json_encode(['status' => 'error', 'message' => 'Invalid email address']);
-    exit;
+// Validate email format when one was provided
+if ($email !== '') {
+    if (strpos($email, "\r") !== false || strpos($email, "\n") !== false || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        http_response_code(400);
+        echo json_encode(['status' => 'error', 'message' => 'Invalid email address']);
+        exit;
+    }
 }
 
 // Block CR/LF in name (prevent injection in subject/body)
@@ -82,7 +93,10 @@ if (strpos($name, "\r") !== false || strpos($name, "\n") !== false) {
 // Strip CR/LF from name (already validated, but double-check)
 $name = str_replace(["\r", "\n"], '', $name);
 $name = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
-$email = filter_var($email, FILTER_SANITIZE_EMAIL);
+if ($email !== '') {
+    $email = filter_var($email, FILTER_SANITIZE_EMAIL);
+}
+$normalizedPhone = htmlspecialchars($normalizedPhone, ENT_QUOTES, 'UTF-8');
 $message = htmlspecialchars($message, ENT_QUOTES, 'UTF-8');
 // Sanitize timeline (optional field)
 if (!empty($timeline)) {
@@ -279,7 +293,8 @@ $to = 'aaron@spearcontracting.ca';
 $subject = 'New Contact Form Submission from ' . $name;
 $email_body = "You have received a new contact form submission:\n\n";
 $email_body .= "Name: $name\n";
-$email_body .= "Email: $email\n";
+$email_body .= "Email: " . ($email !== '' ? $email : 'Not provided') . "\n";
+$email_body .= "Phone: " . ($normalizedPhone !== '' ? $normalizedPhone : 'Not provided') . "\n";
 if (!empty($timeline)) {
     $email_body .= "Estimated Timeline: $timeline\n";
 }
@@ -305,11 +320,11 @@ if (!empty($uploadedFiles)) {
 // Email headers
 $from = 'no-reply@spearcontracting.ca';
 
-// Sanitize email for headers (already validated for CR/LF, but double-check)
-$safeEmail = str_replace(["\r", "\n"], '', $email);
-
 $headers  = "From: Spear Contracting <{$from}>\r\n";
-$headers .= "Reply-To: {$safeEmail}\r\n";
+if ($email !== '') {
+    $safeEmail = str_replace(["\r", "\n"], '', $email);
+    $headers .= "Reply-To: {$safeEmail}\r\n";
+}
 $headers .= "X-Mailer: PHP/" . phpversion() . "\r\n";
 // CC to abooth15@gmail.com
 $cc = 'abooth15@gmail.com';
@@ -325,5 +340,31 @@ if ($mail_sent) {
 } else {
     http_response_code(500);
     echo json_encode(['status' => 'error', 'message' => 'Failed to send message. Please try again later.']);
+}
+
+/**
+ * Return a uniform (NXX) NXX-XXXX number, or null when it is not a usable NANP number.
+ */
+function normalize_nanp_phone($raw) {
+    $digits = preg_replace('/\D+/', '', $raw);
+    if (strlen($digits) === 11 && $digits[0] === '1') {
+        $digits = substr($digits, 1);
+    }
+    if (!preg_match('/^[2-9]\d{2}[2-9]\d{6}$/', $digits)) {
+        return null;
+    }
+    $area = substr($digits, 0, 3);
+    $exchange = substr($digits, 3, 3);
+    $line = substr($digits, 6, 4);
+    if (substr($area, 1) === '11' || substr($exchange, 1) === '11') {
+        return null;
+    }
+    if ($exchange === '555' && substr($line, 0, 2) === '01') {
+        return null;
+    }
+    if (preg_match('/^(\d)\1{9}$/', $digits)) {
+        return null;
+    }
+    return sprintf('(%s) %s-%s', $area, $exchange, $line);
 }
 ?>
