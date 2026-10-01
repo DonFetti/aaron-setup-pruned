@@ -379,6 +379,48 @@ form * {
   font-weight: 600;
 }
 
+.gallery-filters {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.gallery-filter-btn {
+  border: 1px solid #231a1a;
+  background: transparent;
+  color: #231a1a;
+  border-radius: 999px;
+  padding: 0.35rem 0.9rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.2;
+  cursor: pointer;
+}
+.gallery-filter-btn:hover, .gallery-filter-btn.is-active {
+  background: #000000;
+  border-color: #000000;
+  color: #ffffff;
+}
+
+.gallery-filter-clear {
+  border: none;
+  background: transparent;
+  color: #231a1a;
+  padding: 0.35rem 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.gallery-filter-clear:disabled {
+  opacity: 0.4;
+  text-decoration: none;
+  cursor: default;
+}
+
 .textclamp {
   display: -webkit-box;
   -webkit-box-orient: vertical;

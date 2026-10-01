@@ -33,6 +33,7 @@ async function loadProjects() {
         const validProjects = projects.filter(project => project !== null);
         
         displayProjects(validProjects);
+        renderTypeFilters(validProjects);
     } catch (error) {
         console.error('Error loading projects:', error);
         displayErrorMessage('Failed to load projects. Please try again later.');
@@ -121,6 +122,12 @@ function createProjectCard(project, template) {
     // Set slug data attribute
     if (project.slug) {
         cardElement.setAttribute('data-slug', project.slug);
+    }
+
+    const column = card.querySelector('.col-md-6');
+    if (column) {
+        const types = Array.isArray(project.projectType) ? project.projectType.filter(Boolean) : [];
+        column.dataset.projectTypes = JSON.stringify(types);
     }
     
     // Set cover image
@@ -250,6 +257,172 @@ function createProjectCard(project, template) {
     return card;
 }
 
+
+/**
+ * Types requested by the page URL. Repeat the param for more than one type:
+ * /gallery/?type=Residential&type=Framing
+ * @returns {string[]}
+ */
+function typesFromUrl() {
+    return [...new Set(
+        new URLSearchParams(window.location.search).getAll('type')
+            .map(type => type.trim())
+            .filter(Boolean)
+    )];
+}
+
+/**
+ * Keep the address in sync so a filtered gallery can be linked to.
+ * @param {string[]} types - Selected project types
+ */
+function writeTypesToUrl(types) {
+    const url = new URL(window.location.href);
+    url.searchParams.delete('type');
+    types.forEach(type => url.searchParams.append('type', type));
+    const next = url.pathname + url.search + url.hash;
+    const current = window.location.pathname + window.location.search + window.location.hash;
+    if (next !== current) {
+        history.replaceState(null, '', next);
+    }
+}
+
+/**
+ * Build a toggle for each project type, plus any type already requested in the URL.
+ * @param {Array} projects - Projects currently in the gallery
+ */
+function renderTypeFilters(projects) {
+    const container = document.getElementById('gallery-filters');
+    if (!container) {
+        return;
+    }
+
+    const requested = typesFromUrl();
+    const types = [...new Set(
+        projects.flatMap(project => Array.isArray(project.projectType) ? project.projectType : [])
+            .concat(requested)
+            .filter(Boolean)
+    )].sort((a, b) => a.localeCompare(b));
+
+    container.replaceChildren();
+    if (types.length === 0) {
+        return;
+    }
+
+    types.forEach(type => container.appendChild(createFilterButton(type)));
+    container.appendChild(createClearButton());
+
+    requested.forEach(type => setTypeSelected(type, true));
+    applyTypeFilter();
+}
+
+/**
+ * @param {string} type - Project type this button toggles
+ * @returns {HTMLButtonElement}
+ */
+function createFilterButton(type) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'gallery-filter-btn';
+    button.textContent = type;
+    button.dataset.type = type;
+    button.setAttribute('aria-pressed', 'false');
+    button.addEventListener('click', () => toggleTypeFilter(type));
+    return button;
+}
+
+/**
+ * @returns {HTMLButtonElement}
+ */
+function createClearButton() {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.id = 'gallery-filter-clear';
+    button.className = 'gallery-filter-clear';
+    button.textContent = 'Clear';
+    button.disabled = true;
+    button.addEventListener('click', clearTypeFilters);
+    return button;
+}
+
+/**
+ * @param {string} type - Project type
+ * @param {boolean} selected
+ */
+function setTypeSelected(type, selected) {
+    const button = [...document.querySelectorAll('.gallery-filter-btn')]
+        .find(item => item.dataset.type === type);
+    if (!button) {
+        return;
+    }
+    button.classList.toggle('is-active', selected);
+    button.setAttribute('aria-pressed', selected ? 'true' : 'false');
+}
+
+/**
+ * @returns {string[]}
+ */
+function selectedTypes() {
+    return [...document.querySelectorAll('.gallery-filter-btn.is-active')]
+        .map(button => button.dataset.type);
+}
+
+/**
+ * Turn one type on or off. A project stays visible when it matches any selected type.
+ * @param {string} type - Project type
+ */
+function toggleTypeFilter(type) {
+    const button = [...document.querySelectorAll('.gallery-filter-btn')]
+        .find(item => item.dataset.type === type);
+    if (!button) {
+        return;
+    }
+    setTypeSelected(type, !button.classList.contains('is-active'));
+    applyTypeFilter();
+}
+
+/**
+ * Remove every selected type and show the full gallery.
+ */
+function clearTypeFilters() {
+    document.querySelectorAll('.gallery-filter-btn.is-active').forEach(button => {
+        setTypeSelected(button.dataset.type, false);
+    });
+    applyTypeFilter();
+}
+
+/**
+ * Show projects that match any selected type. With nothing selected, show every project.
+ */
+function applyTypeFilter() {
+    const selected = selectedTypes();
+
+    let visible = 0;
+    document.querySelectorAll('#gallery-row > [data-project-types]').forEach(column => {
+        let types = [];
+        try {
+            types = JSON.parse(column.dataset.projectTypes || '[]');
+        } catch (error) {
+            types = [];
+        }
+        const show = selected.length === 0 || selected.some(type => types.includes(type));
+        column.classList.toggle('d-none', !show);
+        if (show) {
+            visible += 1;
+        }
+    });
+
+    const empty = document.getElementById('gallery-filter-empty');
+    if (empty) {
+        empty.classList.toggle('d-none', selected.length === 0 || visible !== 0);
+    }
+
+    const clear = document.getElementById('gallery-filter-clear');
+    if (clear) {
+        clear.disabled = selected.length === 0;
+    }
+
+    writeTypesToUrl(selected);
+}
 
 /**
  * Display empty message when no projects found

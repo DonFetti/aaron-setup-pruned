@@ -434,6 +434,51 @@ form {
     font-weight: 600; // Montserrat SemiBold for more weight
 }
 
+.gallery-filters {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+}
+
+.gallery-filter-btn {
+    border: 1px solid $color-text;
+    background: transparent;
+    color: $color-text;
+    border-radius: 999px;
+    padding: 0.35rem 0.9rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.2;
+    cursor: pointer;
+
+    &:hover,
+    &.is-active {
+        background: $color-black;
+        border-color: $color-black;
+        color: $color-white;
+    }
+}
+
+.gallery-filter-clear {
+    border: none;
+    background: transparent;
+    color: $color-text;
+    padding: 0.35rem 0.5rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.2;
+    text-decoration: underline;
+    cursor: pointer;
+
+    &:disabled {
+        opacity: 0.4;
+        text-decoration: none;
+        cursor: default;
+    }
+}
+
 // Text Clamp Utility
 .textclamp {
     display: -webkit-box;
