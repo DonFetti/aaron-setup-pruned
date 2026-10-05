@@ -167,30 +167,13 @@ li {
 }
 
 .overlay {
-    background: linear-gradient(to top, rgba(20, 24, 28, 0.95), rgba(20, 24, 28, 0.88));
+    background: linear-gradient(to top, rgba(20, 24, 28, 0.94) 0%, rgba(20, 24, 28, 0.78) 42%, rgba(20, 24, 28, 0) 100%);
     width: 100%;
     z-index: 1;
-    padding: 1.5rem 1rem 1.25rem;
-    
-    @media (min-width: 768px) {
-        padding: 2rem 1rem 1.75rem;
-    }
+    padding: 2.75rem 1rem 1rem;
 
-    img {
-        width: 70px;
-        height: 70px;
-        object-fit: contain;
-        background: white;
-        border-radius: 50%;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-        margin-bottom: 0.75rem;
-        transition: transform 0.3s ease;
-        
-        @media (min-width: 768px) {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 1rem;
-        }
+    @media (min-width: 768px) {
+        padding: 3.25rem 1rem 1.15rem;
     }
 
     h1 {
@@ -209,12 +192,68 @@ li {
         text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
     }
 
+    .overlay-credentials {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 0.45rem 0.7rem;
+        margin-top: 0.7rem;
+        text-align: center;
+    }
+
+    .overlay-credentials-label {
+        margin: 0;
+        color: $color-gold;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+    }
+
+    .overlay-credentials-list {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 0.45rem;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        font-size: inherit;
+        text-align: center;
+
+        li {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            margin: 0;
+            padding: 0.28rem 0.7rem;
+            border: 1px solid rgba($color-gold, 0.85);
+            background: rgba(20, 24, 28, 0.45);
+            color: $color-white;
+            font-size: 0.9rem;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+            line-height: 1.2;
+
+            &::before {
+                content: "✓";
+                color: $color-gold;
+                font-size: 0.95rem;
+                font-weight: 700;
+                line-height: 1;
+            }
+        }
+    }
+
     .overlay-actions {
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
         gap: 0.75rem;
-        margin-top: 0.9rem;
+        margin-top: 0.7rem;
     }
 
     .overlay-btn {
