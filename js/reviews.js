@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', loadReviews);
 
 async function loadReviews() {
     const rotator = document.getElementById('review-rotator');
+    const summary = document.getElementById('review-summary');
     if (!rotator) return;
 
     try {
@@ -13,11 +14,64 @@ async function loadReviews() {
         const loaded = await Promise.all((data.reviews || []).map(loadReview));
         const reviews = loaded.filter(review => review && review.text);
 
+        if (summary && data.google) {
+            summary.replaceChildren(...renderGoogleSummary(data.google));
+        }
+
         rotator.replaceChildren(...reviews.map(renderReview));
         playReviews(rotator);
     } catch (error) {
         console.error('Error loading reviews:', error);
     }
+}
+
+function renderGoogleSummary(google) {
+    const rating = Number(google.rating) || 0;
+    const count = Number(google.count) || 0;
+    const block = document.createElement(google.link ? 'a' : 'div');
+    block.className = 'review-summary-link';
+    if (google.link) {
+        block.href = google.link;
+        block.target = '_blank';
+        block.rel = 'noopener noreferrer';
+    }
+
+    const eyebrow = document.createElement('p');
+    eyebrow.className = 'review-summary-eyebrow';
+    eyebrow.textContent = 'Google rating';
+    block.appendChild(eyebrow);
+
+    const score = document.createElement('p');
+    score.className = 'review-summary-score';
+
+    const value = document.createElement('span');
+    value.className = 'review-summary-value';
+    value.textContent = rating.toFixed(1);
+    score.appendChild(value);
+
+    const stars = document.createElement('span');
+    stars.className = 'review-stars';
+    stars.textContent = starDisplay(rating);
+    stars.setAttribute('aria-label', `${rating.toFixed(1)} out of 5 stars`);
+    score.appendChild(stars);
+    block.appendChild(score);
+
+    const meta = document.createElement('p');
+    meta.className = 'review-summary-meta';
+    meta.textContent = count === 1 ? '1 Google review' : `${count} Google reviews`;
+    block.appendChild(meta);
+
+    const cta = document.createElement('span');
+    cta.className = 'review-summary-cta';
+    cta.textContent = 'See all reviews on Google';
+    block.appendChild(cta);
+
+    return [block];
+}
+
+function starDisplay(rating) {
+    const filled = Math.round(Math.max(0, Math.min(5, Number(rating) || 0)));
+    return '★'.repeat(filled) + '☆'.repeat(5 - filled);
 }
 
 async function loadReview(folder) {
@@ -45,7 +99,7 @@ function renderReview(review) {
     const rating = Math.max(0, Math.min(5, Number(review.rating) || 0));
     const stars = document.createElement('p');
     stars.className = 'review-stars';
-    stars.textContent = '★'.repeat(rating) + '☆'.repeat(5 - rating);
+    stars.textContent = starDisplay(rating);
     stars.setAttribute('aria-label', `${rating} out of 5 stars`);
     slide.appendChild(stars);
 
