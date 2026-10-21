@@ -22,3 +22,4 @@ rsync.exclude
 php.ini
 admin/db.php
 .cursor/rules/
+default.php
