@@ -805,6 +805,24 @@ form {
     }
 }
 
+.gallery-coming-soon {
+    margin: 0 auto 2rem;
+    padding: 1.25rem 1.5rem;
+    text-align: center;
+    background: linear-gradient(135deg, $color-gradient-start 0%, rgba($color-gradient-start, 0.35) 100%);
+    border: 1px solid rgba($color-brown, 0.25);
+}
+
+.gallery-coming-soon__text {
+    margin: 0;
+    font-family: $font-montserrat;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: $color-text;
+}
+
 // Text Clamp Utility
 .textclamp {
     display: -webkit-box;
