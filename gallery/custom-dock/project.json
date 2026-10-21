@@ -1,0 +1,61 @@
+{
+  "slug": "custom-dock",
+  "title": "Custom Dock",
+  "projectType": [
+    "Dock Framing",
+    "Carpentry",
+    "Residential"
+  ],
+  "status": "Completed",
+  "location": {
+    "city": "Bracebridge",
+    "province": "Ontario"
+  },
+  "client": {
+    "name": "Littlestocke"
+  },
+  "description": "Custom 24×24 dock framed over existing cribbing using 24-foot 2×12 members. Work included demolition of the existing dock structure and new structural framing for a durable waterfront platform.",
+  "dates": {
+    "start": "Fall 2025",
+    "end": "Fall 2025"
+  },
+  "scopeOfWork": [
+    "Demolition of existing dock",
+    "Dock framing over existing cribbing",
+    "Structural framing with 24-foot 2×12 members"
+  ],
+  "materials": [
+    "Pressure-treated framing lumber",
+    "Pressure-treated posts"
+  ],
+  "team": [
+    {
+      "name": "Aaron Spierenburg",
+      "role": "Lead Carpenter"
+    }
+  ],
+  "coverImage": "gallery/custom-dock/images/DockComplete4.webp",
+  "gallery": [
+    {
+      "url": "gallery/custom-dock/images/1dockprog1.webp",
+      "caption": "Structural Framework"
+    },
+    {
+      "url": "gallery/custom-dock/images/1dock_prog2.webp",
+      "caption": "Decking Installation"
+    },
+    {
+      "url": "gallery/custom-dock/images/DockComplete.webp",
+      "caption": "Dock Complete"
+    },
+    {
+      "url": "gallery/custom-dock/images/DockComplete4.webp",
+      "caption": "Alternate View"
+    }
+  ],
+  "highlights": [
+    "24×24 dock framed over existing cribbing",
+    "Long-span 24-foot 2×12 framing members for structural strength"
+  ],
+  "createdAt": "2025-01-06"
+}
