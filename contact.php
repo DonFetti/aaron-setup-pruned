@@ -28,7 +28,9 @@ $email = isset($_POST['email']) ? trim($_POST['email']) : '';
 $phone = isset($_POST['phone']) ? trim($_POST['phone']) : '';
 $message = isset($_POST['message']) ? trim($_POST['message']) : '';
 $timeline = isset($_POST['timeline']) ? trim($_POST['timeline']) : '';
-$honeypot = isset($_POST['website']) ? trim($_POST['website']) : '';
+// The legacy "website" field can be populated by browser autofill.
+// Use the inert, purpose-neutral field from the current form instead.
+$honeypot = isset($_POST['contact_guard']) ? trim($_POST['contact_guard']) : '';
 
 // Honeypot check - reject if filled
 if (!empty($honeypot)) {

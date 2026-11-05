@@ -225,7 +225,9 @@
                         <div id="form-message" class="d-none mb-3 p-2 rounded"></div>
                         <form id="contact-form" onsubmit="submitForm(event)">
                             <!-- Honeypot field - hidden from users -->
-                            <input type="text" name="website" id="website" tabindex="-1" autocomplete="off" style="position: absolute; left: -9999px;" aria-hidden="true">
+                            <div inert aria-hidden="true" style="position: absolute; left: -9999px;">
+                                <input type="text" name="contact_guard" id="contact-guard" tabindex="-1" autocomplete="off" data-lpignore="true" data-1p-ignore>
+                            </div>
                             <div class="mb-3">
                                 <label for="name" class="form-label">Name:</label>
                                 <input type="text" id="name" name="name" required class="form-control" maxlength="100">
