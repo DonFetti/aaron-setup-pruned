@@ -154,7 +154,7 @@ $hero-fade: 14rem;
 #slideshow {
     position: relative;
     width: 100%;
-    height: calc(100vh + #{$hero-fade});
+    height: 100vh;
     overflow: hidden;
 }
 

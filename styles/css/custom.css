@@ -125,7 +125,7 @@ li {
 #slideshow {
   position: relative;
   width: 100%;
-  height: calc(100vh + 14rem);
+  height: 100vh;
   overflow: hidden;
 }
 
