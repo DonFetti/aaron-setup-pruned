@@ -504,7 +504,7 @@ li {
 }
 
 .contact-btn {
-  background-color: #000000;
+  background-color: #141618;
   color: white;
   padding: 10px 20px;
   border: none;
@@ -579,8 +579,8 @@ li {
   text-decoration: none;
 }
 .service-list a:hover, .service-list a:focus-visible {
-  background: #000000;
-  border-color: #000000;
+  background: #141618;
+  border-color: #141618;
   color: #ffffff;
 }
 .service-list a:focus-visible {
@@ -707,8 +707,8 @@ form * {
   cursor: pointer;
 }
 .gallery-filter-btn:hover, .gallery-filter-btn.is-active {
-  background: #000000;
-  border-color: #000000;
+  background: #141618;
+  border-color: #141618;
   color: #ffffff;
 }
 
