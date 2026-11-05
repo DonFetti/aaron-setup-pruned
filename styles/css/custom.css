@@ -536,6 +536,22 @@ li {
   margin: 0 auto;
 }
 
+.services-intro {
+  padding-top: 2.5rem;
+  text-align: center;
+}
+.services-intro h2 {
+  font-family: "Copperplate", "Copperplate Gothic", serif;
+  font-size: 2.5rem;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+.services-intro p {
+  max-width: 48rem;
+  margin: 0 auto;
+  font-size: 1.125rem;
+}
+
 .service-headers {
   margin-bottom: 0vh;
   margin-top: 2vh;
@@ -546,10 +562,11 @@ li {
   text-transform: none;
 }
 .service-headers a {
-  color: #84641c;
+  color: #231a1a;
   text-decoration: underline;
-  text-underline-offset: 0.12em;
-  text-decoration-thickness: 2px;
+  text-decoration-color: rgba(35, 26, 26, 0.3);
+  text-underline-offset: 0.18em;
+  text-decoration-thickness: 1px;
 }
 .service-headers a::after {
   content: "";
@@ -564,6 +581,7 @@ li {
 }
 .service-headers a:hover, .service-headers a:focus-visible {
   color: #a27b20;
+  text-decoration-color: currentColor;
 }
 .service-headers a:focus-visible {
   outline: 2px solid #c49528;

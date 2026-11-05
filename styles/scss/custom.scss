@@ -600,6 +600,24 @@ $hero-fade: 14rem;
 }
 
 // Services
+.services-intro {
+    padding-top: 2.5rem;
+    text-align: center;
+
+    h2 {
+        font-family: $font-copperplate;
+        font-size: 2.5rem;
+        text-transform: uppercase;
+        margin-bottom: 0.75rem;
+    }
+
+    p {
+        max-width: 48rem;
+        margin: 0 auto;
+        font-size: 1.125rem;
+    }
+}
+
 .service-headers {
     margin-bottom: 0vh;
     margin-top: 2vh;
@@ -610,10 +628,11 @@ $hero-fade: 14rem;
     text-transform: none; // Allow lowercase for better readability
 
     a {
-        color: $color-brown;
+        color: $color-text;
         text-decoration: underline;
-        text-underline-offset: 0.12em;
-        text-decoration-thickness: 2px;
+        text-decoration-color: rgba($color-text, 0.3);
+        text-underline-offset: 0.18em;
+        text-decoration-thickness: 1px;
 
         &::after {
             content: "";
@@ -630,6 +649,7 @@ $hero-fade: 14rem;
         &:hover,
         &:focus-visible {
             color: $color-gold-hover;
+            text-decoration-color: currentColor;
         }
 
         &:focus-visible {
