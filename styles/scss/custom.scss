@@ -1,3 +1,5 @@
+@use "sass:list";
+
 // Variables
 $font-montserrat: "Montserrat", sans-serif;
 $font-copperplate: "Copperplate", "Copperplate Gothic", serif;
@@ -129,27 +131,40 @@ li {
     }
 }
 
-// Slideshow
-#slideshow {
-    @media (min-width: 768px) {
-        position: relative;
-        width: 100%;
-        height: 80vh;
-        overflow: hidden;
-    }
+// Navbar plus this photo area is taller than the viewport. Recent work
+// overlaps the extra height and fades the photo out to white.
+$hero-fade: 14rem;
 
-    @media (max-width: 767px) {
-        position: relative;
-        width: 100%;
-        height: 70vh;
-        overflow: hidden;
-    }
+#slideshow {
+    position: relative;
+    width: 100%;
+    height: calc(100vh + #{$hero-fade});
+    overflow: hidden;
 }
 
 .slideshow-container {
     position: relative;
     width: 100%;
     height: 100%;
+
+    &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        // Smoothstep gives the white fade a flat slope at both ends.
+        // Keep dimming constant underneath so color and opacity don't
+        // introduce extra changes in slope through the transition.
+        $fade-stops: ();
+        @for $step from 0 through 32 {
+            $progress: $step * 0.03125;
+            $opacity: $progress * $progress * (3 - 2 * $progress);
+            $fade-stops: list.append($fade-stops, rgba($color-white, $opacity) ($progress * 100%), comma);
+        }
+        background:
+            linear-gradient(to bottom, $fade-stops) bottom / 100% calc(#{$hero-fade} + 4rem) no-repeat,
+            rgba(20, 24, 28, 0.48);
+        pointer-events: none;
+    }
 }
 
 .slide {
@@ -167,13 +182,14 @@ li {
 }
 
 .overlay {
-    background: linear-gradient(to top, rgba(20, 24, 28, 0.94) 0%, rgba(20, 24, 28, 0.78) 42%, rgba(20, 24, 28, 0) 100%);
     width: 100%;
     z-index: 1;
-    padding: 2.75rem 1rem 1rem;
+    min-height: 58vh;
+    margin-bottom: $hero-fade;
+    padding: 2.75rem 1rem 4.25rem;
 
     @media (min-width: 768px) {
-        padding: 3.25rem 1rem 1.15rem;
+        padding: 3.25rem 1rem 4.5rem;
     }
 
     h1 {
@@ -466,8 +482,10 @@ li {
 }
 
 .about {
-    background: linear-gradient(to bottom, $color-gradient-start, $color-gradient-end);
-    padding-top: 3vh;
+    position: relative;
+    z-index: 2;
+    margin-top: -$hero-fade;
+    padding-top: calc(#{$hero-fade} + 1.5rem);
     p{
         @media (min-width:768px){
             font-size: 2rem;

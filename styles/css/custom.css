@@ -108,27 +108,24 @@ li {
   }
 }
 
-@media (min-width: 768px) {
-  #slideshow {
-    position: relative;
-    width: 100%;
-    height: 80vh;
-    overflow: hidden;
-  }
-}
-@media (max-width: 767px) {
-  #slideshow {
-    position: relative;
-    width: 100%;
-    height: 70vh;
-    overflow: hidden;
-  }
+#slideshow {
+  position: relative;
+  width: 100%;
+  height: calc(100vh + 14rem);
+  overflow: hidden;
 }
 
 .slideshow-container {
   position: relative;
   width: 100%;
   height: 100%;
+}
+.slideshow-container::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.0028686523) 3.125%, rgba(255, 255, 255, 0.0112304688) 6.25%, rgba(255, 255, 255, 0.0247192383) 9.375%, rgba(255, 255, 255, 0.04296875) 12.5%, rgba(255, 255, 255, 0.065612793) 15.625%, rgba(255, 255, 255, 0.0922851563) 18.75%, rgba(255, 255, 255, 0.1226196289) 21.875%, rgba(255, 255, 255, 0.15625) 25%, rgba(255, 255, 255, 0.1928100586) 28.125%, rgba(255, 255, 255, 0.2319335938) 31.25%, rgba(255, 255, 255, 0.2732543945) 34.375%, rgba(255, 255, 255, 0.31640625) 37.5%, rgba(255, 255, 255, 0.3610229492) 40.625%, rgba(255, 255, 255, 0.4067382813) 43.75%, rgba(255, 255, 255, 0.4531860352) 46.875%, rgba(255, 255, 255, 0.5) 50%, rgba(255, 255, 255, 0.5468139648) 53.125%, rgba(255, 255, 255, 0.5932617188) 56.25%, rgba(255, 255, 255, 0.6389770508) 59.375%, rgba(255, 255, 255, 0.68359375) 62.5%, rgba(255, 255, 255, 0.7267456055) 65.625%, rgba(255, 255, 255, 0.7680664063) 68.75%, rgba(255, 255, 255, 0.8071899414) 71.875%, rgba(255, 255, 255, 0.84375) 75%, rgba(255, 255, 255, 0.8773803711) 78.125%, rgba(255, 255, 255, 0.9077148438) 81.25%, rgba(255, 255, 255, 0.934387207) 84.375%, rgba(255, 255, 255, 0.95703125) 87.5%, rgba(255, 255, 255, 0.9752807617) 90.625%, rgba(255, 255, 255, 0.9887695313) 93.75%, rgba(255, 255, 255, 0.9971313477) 96.875%, white 100%) bottom/100% calc(14rem + 4rem) no-repeat, rgba(20, 24, 28, 0.48);
+  pointer-events: none;
 }
 
 .slide {
@@ -145,14 +142,15 @@ li {
 }
 
 .overlay {
-  background: linear-gradient(to top, rgba(20, 24, 28, 0.94) 0%, rgba(20, 24, 28, 0.78) 42%, rgba(20, 24, 28, 0) 100%);
   width: 100%;
   z-index: 1;
-  padding: 2.75rem 1rem 1rem;
+  min-height: 58vh;
+  margin-bottom: 14rem;
+  padding: 2.75rem 1rem 4.25rem;
 }
 @media (min-width: 768px) {
   .overlay {
-    padding: 3.25rem 1rem 1.15rem;
+    padding: 3.25rem 1rem 4.5rem;
   }
 }
 .overlay h1 {
@@ -351,8 +349,7 @@ li {
   width: 3.25rem;
   height: 3.25rem;
   border-radius: 50%;
-  -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
   margin-bottom: 0.65rem;
 }
 
@@ -427,8 +424,10 @@ li {
   }
 }
 .about {
-  background: linear-gradient(to bottom, #d3b886, #ffffff);
-  padding-top: 3vh;
+  position: relative;
+  z-index: 2;
+  margin-top: -14rem;
+  padding-top: calc(14rem + 1.5rem);
 }
 @media (min-width: 768px) {
   .about p {
@@ -472,8 +471,7 @@ li {
 .recent-work-card img {
   width: 100%;
   height: 220px;
-  -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
 }
 .recent-work-card .recent-work-title {
   font-weight: 600;
@@ -787,4 +785,6 @@ form * {
 #project-highlights li:not(#project-team li) > span {
   position: absolute;
   left: 0;
-}/*# sourceMappingURL=custom.css.map */
+}
+
+/*# sourceMappingURL=custom.css.map */
