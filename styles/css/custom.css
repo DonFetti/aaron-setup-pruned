@@ -273,6 +273,30 @@ li {
   font-size: 1rem;
 }
 
+.reviews-layout {
+  max-width: 70rem;
+  margin: 0 auto;
+}
+@media (min-width: 768px) {
+  .reviews-layout {
+    display: grid;
+    grid-template-columns: minmax(14rem, 1fr) minmax(0, 2fr);
+    align-items: center;
+    gap: 2rem;
+  }
+  .reviews-layout .review-summary {
+    width: 100%;
+    margin: 0;
+    padding: 1rem 2rem 1rem 0;
+    border-bottom: 0;
+    border-right: 1px solid rgba(35, 26, 26, 0.18);
+  }
+  .reviews-layout .review-rotator {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
 .review-summary {
   max-width: 46rem;
   margin: 0 auto 1.5rem;
@@ -711,6 +735,7 @@ form * {
 
 #about-banner {
   border-top-width: 2px !important;
+  border-bottom: 2px solid #141618;
 }
 
 .project-title {
