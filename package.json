@@ -7,5 +7,8 @@
   },
   "scripts": {
     "start": "browser-sync start --server --files \"*.html, *.css, *.js, **/*.json, **/*.css\""
+  },
+  "allowScripts": {
+    "@parcel/watcher@2.5.4": true
   }
 }
