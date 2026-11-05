@@ -49,6 +49,20 @@ li {
   font-size: 1rem;
 }
 
+#navbar .navbar {
+  --bs-navbar-padding-y: 0.25rem;
+  --bs-navbar-brand-padding-y: 0;
+}
+#navbar .navbar .navbar-brand {
+  display: flex;
+  align-items: center;
+  line-height: 1;
+}
+#navbar .navbar .navbar-brand img {
+  width: 104px;
+  height: auto;
+}
+
 .active-nav {
   color: #c49528;
 }

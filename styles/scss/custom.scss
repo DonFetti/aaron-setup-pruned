@@ -71,6 +71,22 @@ li {
 
 
 // Navigation
+#navbar .navbar {
+    --bs-navbar-padding-y: 0.25rem;
+    --bs-navbar-brand-padding-y: 0;
+
+    .navbar-brand {
+        display: flex;
+        align-items: center;
+        line-height: 1;
+
+        img {
+            width: 104px;
+            height: auto;
+        }
+    }
+}
+
 .active-nav {
     color: $color-gold;
 
